@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}تماس با ما{% endblock %}
+{% load static %}
+
+{% block content %}
+    <main class="cart-page default ">
+        <div class="container">
+            <div class="row">
+                <div class="contact_us_content col-12 mx-auto">
+                    <header class="card-header">
+                        <h3 class="card-title"><span>تماس با ما</span></h3>
+                    </header>
+                    <div class="account-box contact_us_page">
+
+                        <div class="account-box-content">
+                            <form class="form-account" method="post">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="row">
+                                                <ul>
+                                                    {% if site_settings.address %}
+                                                        <li>
+                                                            <i class="fa fa-map  colormain" aria-hidden="true"></i>{{ site_settings.address }}
+                                                        </li>
+                                                    {% endif %}
+                                                    {% if site_settings.email1 or site_settings.email2 %}
+                                                        <li>
+                                                            <i class="fa fa-envelope colormain" aria-hidden="true"></i>
+                                                            {% if site_settings.email1 %}{{ site_settings.email1 }}{% endif %} - {% if site_settings.email2 %}{{ site_settings.email2 }}{% endif %}
+                                                        </li>
+                                                    {% endif %}
+                                                    {% if site_settings.phone1 or site_settings.phone2 %}
+                                                        <li>
+                                                            <i class="fa fa-phone colormain" aria-hidden="true"></i>
+                                                            {% if site_settings.phone1 %}{{ site_settings.phone1 }}{% endif %} - {% if site_settings.phone2 %}{{ site_settings.phone2 }}{% endif %}
+                                                        </li>
+                                                    {% endif %}
+
+                                                </ul>
+                                                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d191614.86529905675!2d49.24007631142681!3d37.34218334632767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1682887151736!5m2!1sen!2s"
+                                                        style="border:0;width:100%;min-height:400px" allowfullscreen=""
+                                                        loading="lazy"
+                                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-12 form_send_re  ">
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12">
+                                                <div class="form-account-title"> نام <span>(الزامی)</span></div>
+                                                <div class="form-account-row">
+                                                    <input class="input_second input_all" name="first_name" id="first_name" type="text" placeholder=" نام " required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <div class="form-account-title"> نام خانوادگی <span>(الزامی)</span>
+                                                </div>
+                                                <div class="form-account-row">
+                                                    <input class="input_second input_all" name="last_name" id="last_name" type="text" placeholder=" نام خانوادگی " required>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 col-sm-12">
+                                                <div class="form-account-title"> شماره تماس <span>(الزامی)</span></div>
+                                                <div class="form-account-row">
+                                                    <input class="input_second input_all" name="phone" id="phone" type="text" placeholder=" شماره تماس " required>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="form-account-title"> متن پیام <span>(الزامی)</span></div>
+                                                <div class="form-account-row">
+                                                        <textarea class="input_second input_all input_textarea text-right" name="message" id="message" rows="5" placeholder=" متن درخواست خود را وارد کنید" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <button type="submit" class="btn big_btn btn-main-masai">ارسال پیام </button>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}
