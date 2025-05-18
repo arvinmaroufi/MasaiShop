@@ -286,24 +286,46 @@ jQuery(".recent-nav .prev").on("click", function () {
 
 
 
-var slider = document.getElementById('slider');
+document.addEventListener("DOMContentLoaded", function () {
+  const rangeMin = document.getElementById("range-min");
+  const rangeMax = document.getElementById("range-max");
+  const minValue = document.getElementById("min-value");
+  const maxValue = document.getElementById("max-value");
+  const track = document.querySelector(".slider-track");
 
-noUiSlider.create(slider, {
-    start: [12000, 42500],
-    tooltips: true, step: 500,
-    connect: true,
+  const minGap = 1000;
+  const max = 50000;
 
-    range: {
-        'min': 1000,
-        'max': 50000
-    },
-    format: {
-        to: function(value) {
-            return (parseInt(value)+" تومان");
-        },
-        from: (v) => v | 0
+  function updateTrack() {
+    const min = parseInt(rangeMin.value);
+    const maxVal = parseInt(rangeMax.value);
+
+    const percent1 = (min / max) * 100;
+    const percent2 = (maxVal / max) * 100;
+
+    track.style.background = `linear-gradient(to left, #e0e0e0 ${percent2}%, #61bec3 ${percent2}% ${percent1}%, #e0e0e0 ${percent1}%)`;
+
+    minValue.textContent = min;
+    maxValue.textContent = maxVal;
+  }
+
+  rangeMin.addEventListener("input", () => {
+    if (parseInt(rangeMax.value) - parseInt(rangeMin.value) <= minGap) {
+      rangeMin.value = parseInt(rangeMax.value) - minGap;
     }
+    updateTrack();
+  });
+
+  rangeMax.addEventListener("input", () => {
+    if (parseInt(rangeMax.value) - parseInt(rangeMin.value) <= minGap) {
+      rangeMax.value = parseInt(rangeMin.value) + minGap;
+    }
+    updateTrack();
+  });
+
+  updateTrack();
 });
+
 
  
 /*slider speed*/

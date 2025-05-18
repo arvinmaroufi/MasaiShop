@@ -1,0 +1,481 @@
+{% extends 'base.html' %}
+{% block title %}قیمت و خرید {{ products.title|truncatewords:12 }}{% endblock %}
+{% load static %}
+{% load jalali_tags %}
+{% load custom_filters %}
+
+{% block content %}
+    <main class="single-product default">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav>
+                        <ul class="breadcrumb">
+                            <li>
+                                <a href="{% url 'core:home' %}" style="color: #61BEC3"><i class="fa fa-home" aria-hidden="true"></i></a>
+                            </li>
+                            {% for category in products.category.all %}
+                                <li>
+                                    <a href="{% url 'product:category_product_list' category.slug %}"><span>{{ category.title }}</span></a>
+                                </li>
+                            {% endfor %}
+                            {% for brand in products.brand.all %}
+                                <li>
+                                    <a href="{% url 'product:brand_product_list' brand.slug %}"><span>{{ brand.title }}</span></a>
+                                </li>
+                            {% endfor %}
+                            <li>
+                                <span>  {{ products.title|truncatewords:5 }}  </span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <article class="product">
+                        <div class="row product_main_details">
+                            <div class="col-lg-5 col-md-6 col-sm-12">
+                                <div class="product-gallery default">
+                                    {% if products.image %}
+                                        <img class="main_img_gallery" src="{{ products.image.url }}" alt="{{ products.title }}"/>
+                                    {% else %}
+                                        <img class="main_img_gallery" src="{% static 'img/product_image_not_found.jpg' %}" alt="{{ products.title }}"/>
+                                    {% endif %}
+                                    {% if products.stock_count == 0 %}
+                                        <img src="{% static 'img/sell.png' %}" class="type_icon_finished_detail">
+                                    {% endif %}
+                                    <section class="testimonial py-3" id="testimonial">
+                                        <div class="container">
+                                            <div class="row gallery">
+                                                {% for image in product_image %}
+                                                    <div class="col-4 col-md-3 pd"><a href="{{ image.images.url }}" rel="prettyPhoto[gallery1]"><img src="{{ image.images.url }}" class="img-thumb" /></a></div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                </div>
+                                <ul class="gallery-options">
+                                    <li>
+                                        <button class="add-favorites favorites2 favorites_heart"><i
+                                                class="fa fa-heart"></i></button>
+                                    </li>
+                                    <li>
+                                        <button class="favorites2" data-toggle="modal" data-target="#myModal"><i
+                                                class="fa fa-share-alt"></i></button>
+                                    </li>
+                                </ul>
+                                <!-- Modal Core -->
+                                <div class="modal-share modal fade" id="myModal" tabindex="-1" role="dialog"
+                                     aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-hidden="true">&times;
+                                                </button>
+                                                <h4 class="modal-title" id="myModalLabel">به اشتراک گذاشتن</h4>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form class="default">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <p>
+                                                                برای کپی آدرس در کادر زیر دابل کلیک کنید
+                                                            </p>
+                                                            <p class="right-side-header shareurlvalue"
+                                                               title="کپی بعد دوبار کلیک" id="text"
+                                                               ondblclick="copyToClipboard(this.id)"
+                                                               style="overflow-wrap: break-word; word-break: break-all; white-space: normal;">
+                                                                {{ request.build_absolute_uri|truncatechars:80 }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal Core -->
+                            </div>
+                            <div class="col-lg-7 col-md-6 col-sm-12 ">
+
+                                <h2 class="product-title ">
+                                    {{ products.title }}
+                                </h2>
+                                {% if products.model %}
+                                    <hr class="hr-text" data-content="{{ products.model }}">
+                                {% else %}
+                                    <hr class="hr-text" data-content="مدل ثبت نشده">
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-6">
+                                        <ul class="list-group space-15">
+                                            {% if products.color.all %}
+                                                <li class="list-group-item">رنگ: {{ products.color.all|join:'، ' }}</li>
+                                            {% endif %}
+                                            {% if products.model %}
+                                                <li class="list-group-item">مدل: {{ products.model }}</li>
+                                            {% endif %}
+                                            {% if products.brand.all %}
+                                                <li class="list-group-item"> برند: {{ products.brand.all|join:'، ' }}</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-6">
+                                        <ul class="list-group space-15">
+                                            {% if products.weight %}
+                                                <li class="list-group-item">وزن: {{ products.weight }}</li>
+                                            {% endif %}
+                                            {% if products.dimensions %}
+                                                <li class="list-group-item"> ابعاد: {{ products.dimensions }}</li>
+                                            {% endif %}
+                                            {% if products.operating_system %}
+                                                <li class="list-group-item"> سیستم عامل : {{ products.operating_system }}</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 product_main_pr">
+
+                                        <div class="time_pr">
+
+
+                                            <div class="row">
+                                                <div class="col-12 upda">
+                                                    <b>
+                                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+
+                                                        زمان ارسال محصول :
+                                                    </b>
+                                                    از انبار مَسای کالا طی 5 روز کاری
+                                                </div>
+
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="stock-info">
+                                                        <p>موجودی انبار:
+                                                           <span style="color: #46A9AE; font-weight: bold;">{{ products.stock_count }}</span> عدد
+                                                        </p>
+                                                        <div class="progress" style="height: 14px; background: #f5f5f5;">
+                                                            <div class="progress-bar"
+                                                                 style="width: {{ products.stock_count }}%;
+                                                                        background-color: #46A9AE;
+                                                                        border-radius: 5px;">
+                                                            </div>
+                                                        </div>
+                                                        <small style="color: {% if products.stock_count == 0 %}#FF0000{% elif products.stock_count < 5 and products.stock_count > 0 %}#e74c3c{% else %}#46A9AE{% endif %};">
+                                                            {% if products.stock_count == 0 %}
+                                                                موجود نیست
+                                                            {% elif products.stock_count < 5 and products.stock_count > 0 %}
+                                                                فقط {{ products.stock_count }} عدد باقی مانده
+                                                            {% else %}
+                                                                موجود در انبار مَسای
+                                                            {% endif %}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-lg-6 col-md-6 border_left">
+                                                    <div class="price space-15">
+                                                        {% if products.old_price %}
+                                                            <del><span>{{ products.old_price|format_price }}<span>تومان</span></span></del>
+                                                        {% endif %}
+                                                        <ins><span>{{ products.price|format_price }}<span>تومان</span></span></ins>
+                                                    </div>
+                                                    <div class="col-12 timer-title text--center">
+                                                        {% if products.stock_count > 0 %}
+                                                            <a href="#" class="btn btn-main-masai big_btn">افزودن به سبد</a>
+                                                        {% else %}
+                                                            <button class="btn btn-main-masai big_btn" disabled>موجود نیست</button>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="txt_note">
+                                            <i class="fa fa-info" aria-hidden="true"></i>
+                                            برای کالاهای گروه موبایل، امکان برگشت کالا به دلیل انصراف از خرید تنها در
+                                            صورتی مورد قبول است که کالا بدون هیچگونه استفاده و با تمامی قطعات، متعلقات و
+                                            بسته‌بندی‌های اولیه خود بازگردانده شود. لازم به ذکر است که برای هر کالای
+                                            موبایل، ضمانت رجیستری صادر می‌شود. در صورت بروز اشکال در ضمانت رجیستری، پس
+                                            از انقضای مدت ۳۰ روزه، کالا می‌تواند بازگردانده شود.
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 default no-padding bg_single_product">
+                        <div class="product-tabs default">
+                            <div class="box-tabs default">
+                                <ul class="nav" role="tablist">
+                                    <li class="box-tabs-tab">
+                                        <a class="active " data-toggle="tab" href="#desc" role="tab"
+                                           aria-expanded="true">
+                                            توضیحات تکمیلی
+                                        </a>
+                                    </li>
+                                    <li class="box-tabs-tab">
+                                        <a data-toggle="tab" href="#params" role="tab" aria-expanded="false">
+                                            مشخصات محصول
+                                        </a>
+                                    </li>
+                                    <li class="box-tabs-tab">
+                                        <a data-toggle="tab" href="#comments" role="tab" aria-expanded="false">
+                                            دیدگاه کاربران
+                                        </a>
+                                    </li>
+                                    <li class="box-tabs-tab">
+                                        <a data-toggle="tab" href="#comments_questions" role="tab"
+                                           aria-expanded="false">
+                                            ارسال دیدگاه
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="card-body default">
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="desc" role="tabpanel" aria-expanded="true">
+
+                                            <header class="card-header">
+                                                <h3 class="card-title"><span>بررسی تخصصی {{ products.title }} </span>
+                                                </h3>
+                                            </header>
+                                            <div class="parent-expert default">
+                                                <div class="content-expert">
+                                                    <p>{{ products.description|safe }}</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="tab-pane params" id="params" role="tabpanel" aria-expanded="false">
+                                            <header class="card-header">
+                                                <h3 class="card-title"><span>بررسی تخصصی {{ products.title }} </span>
+                                                </h3>
+                                            </header>
+
+                                            <div class="col-12">
+                                                <ul class="list-group ">
+                                                    {% if products.brand.all %}
+                                                        <li class="list-group-item">برند: {{ products.brand.all|join:'، ' }}</li>
+                                                    {% endif %}
+                                                    {% if products.model %}
+                                                        <li class="list-group-item">مدل: {{ products.model }}</li>
+                                                    {% endif %}
+                                                    {% if products.color.all %}
+                                                        <li class="list-group-item">رنگ: {{ products.color.all|join:'، ' }}</li>
+                                                    {% endif %}
+                                                    {% if products.weight %}
+                                                        <li class="list-group-item">وزن: {{ products.weight }}</li>
+                                                    {% endif %}
+                                                    {% if products.dimensions %}
+                                                        <li class="list-group-item">ابعاد: {{ products.dimensions }}</li>
+                                                    {% endif %}
+                                                    {% if products.operating_system %}
+                                                        <li class="list-group-item">سیستم عامل: {{ products.operating_system }}</li>
+                                                    {% endif %}
+                                                    {% if products.battery_capacity %}
+                                                        <li class="list-group-item">ظرفیت باتری: {{ products.battery_capacity }}</li>
+                                                    {% endif %}
+                                                    {% if products.ram %}
+                                                        <li class="list-group-item">حافظه موقت: {{ products.ram }}</li>
+                                                    {% endif %}
+                                                    {% if products.internal_memory %}
+                                                        <li class="list-group-item">حافظه داخلی: {{ products.internal_memory }}</li>
+                                                    {% endif %}
+                                                    {% if products.camera_resolution %}
+                                                        <li class="list-group-item">رزولوشن دوربین: {{ products.camera_resolution }}</li>
+                                                    {% endif %}
+                                                    {% if products.connectivity %}
+                                                        <li class="list-group-item">نوع اتصال: {{ products.connectivity }}</li>
+                                                    {% endif %}
+                                                    {% if products.processor_generation %}
+                                                        <li class="list-group-item">نسل پردازنده: {{ products.processor_generation }}</li>
+                                                    {% endif %}
+                                                    {% if products.processor_manufacturer %}
+                                                        <li class="list-group-item">سازنده پردازنده: {{ products.processor_manufacturer }}</li>
+                                                    {% endif %}
+                                                    {% if products.processor_series %}
+                                                        <li class="list-group-item">سری پردازنده: {{ products.processor_series }}</li>
+                                                    {% endif %}
+                                                    {% if products.body_material %}
+                                                        <li class="list-group-item">جنس بدنه: {{ products.body_material }}</li>
+                                                    {% endif %}
+                                                    {% if products.strap_material %}
+                                                        <li class="list-group-item">جنس بند: {{ products.strap_material }}</li>
+                                                    {% endif %}
+                                                    {% if products.display_size %}
+                                                        <li class="list-group-item">اندازه صفحه نمایش: {{ products.display_size }}</li>
+                                                    {% endif %}
+                                                    {% if products.bluetooth_version %}
+                                                        <li class="list-group-item">نسخه بلوتوث: {{ products.bluetooth_version }}</li>
+                                                    {% endif %}
+                                                    {% if products.antenna_count %}
+                                                        <li class="list-group-item">تعداد آنتن: {{ products.antenna_count }}</li>
+                                                    {% endif %}
+                                                    {% if products.antenna_type %}
+                                                        <li class="list-group-item">نوع آنتن: {{ products.antenna_type }}</li>
+                                                    {% endif %}
+                                                    {% if products.power_source %}
+                                                        <li class="list-group-item">منبع تغذیه: {{ products.power_source }}</li>
+                                                    {% endif %}
+                                                    {% if products.os_support %}
+                                                        <li class="list-group-item">قابلیت پشتیبانی از سیستم عامل‌ های: {{ products.os_support }}</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="comments" role="tabpanel" aria-expanded="false">
+
+                                            <header class="card-header">
+                                                <h3 class="card-title"><span>دیدگاه کاربران</span></h3>
+                                            </header>
+                                            {% if products.product_comments.all %}
+                                                <div class="comments_form default">
+                                                <ol class="comment-list">
+                                                    <!-- #comment-## -->
+                                                    {% for comment in comments %}
+                                                        {% if comment.status == 'published' %}
+                                                            <li>
+                                                                <div class="comment-body">
+                                                                    <div class="comment-author">
+                                                                        <img alt="" src="{% static 'img/profile/1.png' %}" class="avatar">
+                                                                        <div class="text-h5">
+                                                                            {% if comment.author.first_name and comment.author.last_name %}
+                                                                                {{ comment.author.first_name }} {{ comment.author.last_name }}
+                                                                            {% else %}
+                                                                                {{ comment.author.username }}
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <p>{{ comment.body }}</p>
+                                                                    <ul class="commentul">
+                                                                        <li>
+                                                                            {{ comment.created_at|to_jalali:'%d %B %Y' }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </li>
+                                                        {% else %}
+                                                            <li>دیدگاهی وجود ندارد!</li>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </ol>
+                                            </div>
+                                            {% else %}
+                                                <p>دیدگاهی وجود ندارد!</p>
+                                            {% endif %}
+
+                                        </div>
+                                        <div class="tab-pane form-comment" id="comments_questions" role="tabpanel"
+                                             aria-expanded="false">
+                                            <header class="card-header">
+                                                <h3 class="card-title"><span>ارسال دیدگاه </span></h3>
+                                            </header>
+
+                                            {% if request.user.is_authenticated %}
+                                                <form id="comment-form" class="comment">
+                                                    {% csrf_token %}
+                                                    <textarea class="form-control" placeholder="متن دیدگاه" name="body" id="body" rows="4" required></textarea>
+                                                    <button class="btn btn-main-masai" type="submit">ثبت دیدگاه</button>
+                                                </form>
+                                            {% else %}
+                                                <a href="#login" class="btn btn-main-masai">برای ثبت دیدگاه ابتدا باید وارد شوید</a>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function copyToClipboard() {
+            const textToCopy = '{{ request.build_absolute_uri }}';
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    Swal.fire({
+                        text: 'آدرس در کلیپ‌بورد شما کپی شد.',
+                        icon: 'success',
+                        confirmButtonText: 'تایید',
+                        confirmButtonColor: '#46A9AE',
+                        background: '#f8f9fa', // رنگ پس‌زمینه
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    });
+                })
+                .catch(err => {
+                    Swal.fire({
+                        title: 'خطا',
+                        text: 'خطا در کپی کردن آدرس.',
+                        icon: 'error',
+                        confirmButtonColor: '#e74c3c'
+                    });
+                });
+        }
+
+        document.getElementById('comment-form')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const body = document.getElementById('body').value.trim();
+            if (!body) return;
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ body: body })
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                const commentList = document.querySelector('.comment-list');
+                const newComment = document.createElement('li');
+                newComment.innerHTML = `
+                    <div class="comment-body">
+                        <div class="comment-author">
+                            <img alt="" src="/static/img/profile/1.png" class="avatar">
+                            <div class="text-h5">{{ request.user.username }}</div>
+                        </div>
+                        <p>${body}</p>
+                        <ul class="commentul">
+                            <li>همین حالا</li>
+                        </ul>
+                    </div>
+                `;
+                commentList.prepend(newComment);
+                document.getElementById('body').value = '';
+                const commentsTab = document.querySelector('a[href="#comments"]');
+                if (commentsTab) {
+                    commentsTab.click();
+                    setTimeout(() => {
+                        document.getElementById('comments').scrollIntoView({ behavior: 'smooth' });
+                    }, 200);
+                }
+            }
+        });
+    </script>
+{% endblock %}

@@ -9,6 +9,21 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ['phone1', 'phone2', 'email1', 'email2', 'copy_right', 'instagram_link', 'telegram_link']
 
 
+@admin.register(models.Banner)
+class BannerAdmin(admin.ModelAdmin):
+    list_display = ['title', 'banner_image', 'banner_type', 'status', ]
+
+    def short_title(self, obj):
+        if len(obj.title) > 20:
+            return obj.title[:20] + '...'
+        return obj.title
+    short_title.short_description = 'عنوان محصول'
+
+    @admin.display(description='تاریخ ایجاد', ordering='created_at')
+    def get_created_at_jalali(self, obj):
+        return datetime2jalali(obj.created_at).strftime('%a, %d %b %Y')
+
+
 @admin.register(models.ContactUs)
 class ContactUsAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'phone', 'short_message', 'get_date_send_jalali']

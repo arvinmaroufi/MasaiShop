@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}درباره مَسای شاپ{% endblock %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+    <main class="cart-page default ">
+        <div class="container">
+            <div class="row">
+                <div class="contact_us_content col-12 mx-auto">
+                    <header class="card-header">
+                        <h3 class="card-title"><span>درباره ما</span></h3>
+                    </header>
+                    <div class="account-box contact_us_page">
+
+                        <div class="account-box-content">
+                            <form class="form-account">
+                                <div class="row">
+                                    {{ site_settings.text_about_us|safe }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}

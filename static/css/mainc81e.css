@@ -1611,6 +1611,30 @@ font-size: 22px;
     transition: all 0.5s ease 0s;
 
 }
+
+.type_icon_finished {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 130px !important;
+    height: 116px;
+}
+.type_icon_finished:hover {
+
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+    -webkit-transition: all 0.5s ease 0s;
+    transition: all 0.5s ease 0s;
+
+}
+
+.type_icon_finished_detail {
+    position: absolute;
+    top: 55px;
+    right: 60px;
+    width: 200px !important;
+    height: 186px;
+}
 /* main */
 
 

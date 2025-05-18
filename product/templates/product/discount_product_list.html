@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}محصولات شگفت انگیز مَسای{% endblock %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+    <main class="search-page default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 hidden-xs">
+                    <div class="brand-slider card border_all ">
+                        <header class="card-header">
+                            <h3 class="card-title"><span>دسته بندی ها</span></h3>
+                        </header>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    {% for category in categories %}
+                                        <div class="col-6 col-md-2 contact-bigicon">
+                                            <a href="{% url 'product:category_product_list' category.slug %}">
+                                                {% if category.image %}
+                                                    <img class="img-responsive imgpad" src="{{ category.image.url }}"
+                                                         alt="{{ category.title }}"/>
+                                                {% else %}
+                                                    <img class="img-responsive imgpad"
+                                                         src="{% static 'img/category_image_not_found.png' %}"
+                                                         alt="{{ category.title }}"/>
+                                                {% endif %}
+                                                <b class="title-3 light-black">{{ category.title }}</b>
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <aside class="sidebar-page col-12 col-sm-12 col-md-4 col-lg-3 ">
+                    <form method="get">
+                        <div class="box ">
+                            <header class="card-header">
+                                <h3 class="card-title"><span class="space-right-10">قیمت</span></h3>
+                            </header>
+                            <div class="price-range-wrapper">
+                                <div class="price-values">
+                                    <span>از <span id="min-value">{{ min_price }}</span> تومان</span>
+                                    <span>تا <span id="max-value">{{ max_price }}</span> تومان</span>
+                                </div>
+                                <div class="slider-track-container">
+                                    <input type="range" name="min_price" min="{{ actual_min_price }}" max="{{ actual_max_price }}" value="{{ min_price }}" step="500" id="minRange">
+                                    <input type="range" name="max_price" min="{{ actual_min_price }}" max="{{ actual_max_price }}" value="{{ max_price }}" step="500" id="maxRange">
+                                    <div class="slider-track"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="box">
+                            <div class="box-content">
+                                <input type="checkbox" class="bootstrap-switch" name="in_stock" value="1" {% if in_stock == '1' %}checked{% endif %}/>
+                                <label for="">موجود در انبار مسای</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="view_more">اعمال فیلتر</button>
+                    </form>
+                </aside>
+                <div class="col-12 col-sm-12 col-md-8 col-lg-9">
+
+                    <div class="listing default ">
+                        <div class="tab-content default text-center">
+                            <div class="tab-pane active" role="tabpanel" aria-expanded="true">
+
+                                <div class="row listing-items">
+                                    {% if products %}
+                                        {% for product in products %}
+                                            <div class="col-xl-4 col-lg-4 col-md-6 col-12 list_search_p ">
+                                                <div class="product-box">
+                                                    <div class="product-seller-details product-seller-details-item-grid">
+                                                    <span class="search_prod_icon">
+                                                        <i class="fa fa-search search_icon_search"
+                                                           aria-hidden="true"></i>
+                                                        <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
+                                                    </span>
+                                                        <span class="search_prod_btn">
+                                                        <i class="fa fa fa-cart-arrow-down search_icon_cart"
+                                                           aria-hidden="true"></i>
+                                                    </span>
+                                                    </div>
+                                                    <a class="product-box-img"
+                                                       href="{% url 'product:product_detail' product.pid product.slug %}">
+                                                        {% if product.image %}
+                                                            <img src="{{ product.image.url }}"
+                                                                 alt="{{ product.title|truncatewords:10 }}">
+                                                        {% else %}
+                                                            <img src="{% static 'img/product_image_not_found.jpg' %}"
+                                                                 alt="{{ product.title|truncatewords:10 }}">
+                                                        {% endif %}
+                                                        {% if product.stock_count == 0 %}
+                                                            <img src="{% static 'img/sell.png' %}" class="type_icon_finished">
+                                                        {% endif %}
+                                                        <ul>
+                                                            {% for color in product.color.all %}
+                                                                <li class="color_pro"
+                                                                    style="background-color: {{ color.color_code }}; top: {{ forloop.counter|multiply:13|add:-6 }}px;"></li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </a>
+                                                    <div class="product-box-content">
+                                                        <div class="product-box-content-row">
+                                                            <div class="product_title">
+                                                                <a href="{% url 'product:product_detail' product.pid product.slug %}">{{ product.title }}</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="product-box-row product_price_search">
+                                                            <div class="price">
+                                                                {% if product.old_price %}
+                                                                    <del>
+                                                                        <span>{{ product.old_price|format_price }}<span>تومان</span></span>
+                                                                    </del>
+                                                                    <span class="discount_badge">{{ product.discount_percentage }}%</span>
+                                                                {% endif %}
+                                                                <ins>
+                                                                    <span>{{ product.price|format_price }}<span>تومان</span></span>
+                                                                </ins>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        محصولی وجود ندارد!
+                                    {% endif %}
+                                </div>
+
+                                <!-- Pagination -->
+                                {% if products.has_other_pages %}
+                                    <div class="pagination">
+                                        {% if products.has_previous %}
+                                            <a href="?page={{ products.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}" class="page-arrow prev"><i class="fa fa-angle-right"></i></a>
+                                        {% endif %}
+                                        {% for page in pages_to_show %}
+                                            {% if page == '...' %}
+                                                <span class="page-number">...</span>
+                                            {% elif products.number == page %}
+                                                <a href="?page={{ page }}{% if querystring %}&{{ querystring }}{% endif %}" class="page-number active">{{ page }}</a>
+                                            {% else %}
+                                                <a href="?page={{ page }}{% if querystring %}&{{ querystring }}{% endif %}" class="page-number">{{ page }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if products.has_next %}
+                                            <a href="?page={{ products.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}" class="page-arrow next"><i class="fa fa-angle-left"></i></a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <!-- Pagination -->
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        const minRange = document.getElementById('minRange');
+        const maxRange = document.getElementById('maxRange');
+        const minValue = document.getElementById('min-value');
+        const maxValue = document.getElementById('max-value');
+
+        function formatPrice(num) {
+            return parseInt(num).toLocaleString('fa-IR');
+        }
+
+        function updatePriceLabels() {
+            minValue.textContent = formatPrice(minRange.value);
+            maxValue.textContent = formatPrice(maxRange.value);
+        }
+
+        minRange.addEventListener('input', updatePriceLabels);
+        maxRange.addEventListener('input', updatePriceLabels);
+
+        // مقدار اولیه هنگام بارگذاری
+        updatePriceLabels();
+    </script>
+{% endblock %}
