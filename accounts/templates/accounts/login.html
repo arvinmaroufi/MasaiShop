@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}ورود{% endblock %}
+{% load static %}
+
+{% block content %}
+    <main class="wrapper default">
+        <div class="container">
+            <div class="row">
+                <div class="main-content login_content  col-12 col-md-7 col-lg-5 mx-auto">
+                    <header class="card-header">
+                        <h3 class="card-title"><span>ورود به حساب کاربری</span></h3>
+                    </header>
+                    <div class="login_box">
+
+
+                        <form class="" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                {% for error in form.non_field_errors %}
+                                    {% if error %}
+                                        <p class="alert alert-danger mb-2">{{ error }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-account-title"><span>*</span> نام کاربری</div>
+                                    <div class="form-account-row">
+                                        <input type="text" class="input_second input_all" name="username" placeholder=" نام کاربری">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-account-title"><span>*</span> رمز عبور</div>
+                                    <div class="form-account-row">
+                                        <input type="password" class="input_second input_all" name="password" placeholder=" رمز عبور">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 text--center">
+                                    <button type="submit" class="btn big_btn btn-main-masai">ورود </button>
+                                </div>
+                                <div class="col-12 footer_login_reg text--center">
+                                    <p>
+                                        <span>کاربر جدید هستید؟</span>
+                                        <a href="{% url 'account:register' %}">ثبت نام</a>
+
+                                    </p>
+
+                                </div>
+                                <div class="col-12 ">
+
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

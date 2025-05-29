@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}عضویت{% endblock %}
+{% load static %}
+
+{% block content %}
+    <main class="wrapper default ">
+        <div class="container">
+            <div class="row">
+                <div class="main-content login_content  col-12 col-md-7 col-lg-5 mx-auto ">
+                    <header class="card-header">
+                        <h3 class="card-title"><span>ایجاد به حساب کاربری</span></h3>
+                    </header>
+                    <div class="login_box">
+                        <form class="" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-account-title"><span>*</span> نام</div>
+                                    <div class="form-account-row">
+                                        <input type="text" class="input_second input_all" name="first_name" placeholder=" نام">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-account-title"><span>*</span> نام خانوادگی</div>
+                                    <div class="form-account-row">
+                                        <input type="text" class="input_second input_all" name="last_name" placeholder=" نام خانوادگی">
+                                    </div>
+                                </div>
+                                {% for error_username in form.username.errors %}
+                                    {% if error_username %}
+                                        <p style="font-size: 12px;" class="alert alert-danger mb-2">{{ error_username }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-account-title"><span>*</span> نام کاربری</div>
+                                    <div class="form-account-row">
+                                        <input type="text" class="input_second input_all" name="username" placeholder=" نام کاربری">
+                                    </div>
+                                </div>
+                                {% for error_email in form.email.errors %}
+                                    {% if error_email %}
+                                        <p style="font-size: 12px;" class="alert alert-danger mb-2">{{ error_email }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-account-title"><span>*</span> ایمیل</div>
+                                    <div class="form-account-row">
+                                        <input type="email" class="input_second input_all" name="email" placeholder=" ایمیل">
+                                    </div>
+                                </div>
+                                {% for error_password in form.password.errors %}
+                                    {% if error_password %}
+                                        <p style="font-size: 12px;" class="alert alert-danger mb-2">{{ error_password }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-account-title"><span>*</span> رمز عبور</div>
+                                    <div class="form-account-row">
+                                        <input type="password" class="input_second input_all" name="password" placeholder=" رمز عبور">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-account-agree">
+                                        <label class="checkbox-form checkbox-primary">
+                                            <input type="checkbox" id="agree">
+                                            <span class="checkbox-check"></span>
+                                        </label>
+                                        <label for="agree">
+                                            تمامی <a href="#">شرایط و قوانین</a> استفاده از سرویس‌های سایت مَسای را به دقت مطالعه کرده و با آنها موافقت کامل دارم
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 text--center">
+                                    <button class="btn big_btn btn-main-masai">عضویت  </button>
+                                </div>
+                                <div class="col-12 footer_login_reg text--center">
+                                    <p>
+                                        <span>قبلا ثبت نام کرده اید؟</span>
+                                        <a href="{% url 'account:login' %}">ورود</a>
+
+                                    </p>
+
+                                </div>
+                                <div class="col-12 ">
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}
