@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('core.urls')),
     path('products/', include('product.urls')),
     path('account/', include('accounts.urls')),
+    path('blog/', include('blog.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     # redirect urls
     path('products/category/', views.redirect_to_home, name='redirect_to_home'),
