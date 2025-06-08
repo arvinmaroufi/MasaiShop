@@ -3,6 +3,7 @@ from .forms import ContactUsForm
 from product.models import ProductBrand, Product
 from django.db import models
 from .models import Banner
+from blog.models import Article
 
 
 def home(request):
@@ -15,6 +16,7 @@ def home(request):
     popular_brands = ProductBrand.objects.all().order_by('-views')[:10]
     popular_products = Product.objects.filter(status='published').order_by('-views')[:9]
     latest_products = Product.objects.filter(status='published', old_price=None).order_by('-created_at')[:4]
+    latest_articles = Article.objects.filter(status='published').order_by('-created_at')[:5]
     discounted_products = Product.objects.filter(
         status='published',
         old_price__isnull=False,
@@ -33,6 +35,7 @@ def home(request):
         'popular_brands': popular_brands,
         'popular_products': popular_products,
         'latest_products': latest_products,
+        'latest_articles': latest_articles,
         'discounted_products': discounted_products,
     }
     return render(request, 'core/home.html', context)
