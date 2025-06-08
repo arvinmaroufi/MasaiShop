@@ -14,5 +14,6 @@ urlpatterns = [
     # redirect urls
     path('products/category/', views.redirect_to_home, name='redirect_to_home'),
     path('products/brand/', views.redirect_to_home, name='redirect_to_home'),
+    path('blog/category/', views.redirect_to_home, name='redirect_to_home'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

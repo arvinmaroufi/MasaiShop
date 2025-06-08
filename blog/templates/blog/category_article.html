@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}وبلاگ{% endblock %}
+{% block title %}مقالات {{ category.title }}{% endblock %}
 {% load static %}
 {% load jalali_tags %}
 
@@ -14,7 +14,10 @@
                                 <a href="{% url 'core:home' %}" style="color: #61BEC3"><i class="fa fa-home" aria-hidden="true"></i></a>
                             </li>
                             <li>
-                                <span>وبلاگ</span>
+                                <a href="{% url 'blog:article_list' %}"><span>وبلاگ</span></a>
+                            </li>
+                            <li>
+                                <span>{{ category.title }}</span>
                             </li>
                         </ul>
                     </nav>
