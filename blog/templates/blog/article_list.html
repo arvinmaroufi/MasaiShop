@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}وبلاگ{% endblock %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block content %}
+    <main class="category-blog default space-top-30">
+        <div class="container ">
+            <div class="row">
+                <div class="col-12">
+                    <nav>
+                        <ul class="breadcrumb">
+                            <li>
+                                <a href="{% url 'core:home' %}" style="color: #61BEC3"><i class="fa fa-home"
+                                                                                          aria-hidden="true"></i></a>
+                            </li>
+                            <li>
+                                <span>وبلاگ</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="single_blog_content cat_blog_content col-12 col-lg-9 mx-auto order-1 order-sm-1 ">
+                    <div class="row listing-items Blog-category">
+                        {% if articles %}
+                            {% for article in articles %}
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-12  ">
+                                    <div class="blog_tag">
+                                        <a href="#">
+                                            {% if article.image %}
+                                                <img src="{{ article.image.url }}" class="img-fluid" alt="{{ article.title|truncatewords:13 }}">
+                                            {% else %}
+                                                <img src="{% static 'img/article_image_not_found.jpg' %}" class="img-fluid" alt="{{ article.title|truncatewords:13 }}">
+                                            {% endif %}
+                                        </a>
+                                        <a href="#">
+                                            <h2 class="Blog_title">
+                                                {{ article.title|truncatewords:13 }}
+                                            </h2>
+                                        </a>
+                                        <div class="Blog_list">
+                                            <span class="Blog_author">
+                                                <i class="fa fa-user"></i>
+                                                {% if article.author.profile.first_name and article.author.profile.last_name %}
+                                                    {{ article.author.profile.first_name }} {{ article.author.profile.last_name }}
+                                                {% else %}
+                                                    {{ article.author.username }}
+                                                {% endif %}
+                                            </span>
+                                            <span class="Blog_Date">
+                                                <i class="fa fa-calendar "></i>
+                                                {{ article.created_at|to_jalali:'%d %b %Y' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            مقاله ای وجود ندارد!
+                        {% endif %}
+                    </div>
+                    <!-- Pagination -->
+                    {% if articles.has_other_pages %}
+                        <div class="pagination">
+                            {% if articles.has_previous %}
+                                <a href="?page={{ articles.previous_page_number }}" class="page-arrow prev"><i class="fa fa-angle-right"></i></a>
+                            {% endif %}
+                            {% for page in pages_to_show %}
+                                {% if page == '...' %}
+                                    <span class="page-number">...</span>
+                                {% elif articles.number == page %}
+                                    <a href="?page={{ page }}" class="page-number active">{{ page }}</a>
+                                {% else %}
+                                    <a href="?page={{ page }}" class="page-number">{{ page }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            {% if articles.has_next %}
+                                <a href="?page={{ articles.next_page_number }}" class="page-arrow next"><i class="fa fa-angle-left"></i></a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <!-- Pagination -->
+                </div>
+                <div class="col-12 col-lg-3 ">
+
+                    <div class="sidebar_blog">
+                        <div class="widget_blog">
+                            <div class="widget_blog_headbox">
+                                <h3> دسته بندی ها </h3>
+                            </div>
+                            <div class="blog_list_widget_blog">
+                                <div class="widget_blog_groups">
+                                    <ul class="widget_blog_posts">
+                                        {% for category in categories %}
+                                            <li><a class="widget_blog_title_link" href="#">{{ category.title }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div><!-- end blog-list -->
+                        </div>
+                        <div class="widget_blog marg_top20">
+                            <div class="widget_blog_headbox">
+                                <h3>آخرین مقالات </h3>
+                            </div>
+                            <div class="blog_list_widget_blog">
+                                <div class="widget_blog_groups">
+                                    <ul class="widget_blog_posts">
+                                        {% for article in latest_articles %}
+                                            <li><a class="widget_blog_title_link" href="#">{{ article.title|truncatewords:6 }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div><!-- end blog-list -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

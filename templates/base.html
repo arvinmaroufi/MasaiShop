@@ -82,7 +82,7 @@
                     <a href="{% url 'product:product_list' %}"> محصولات</a>
                 </li>
                 <li>
-                    <a href="#">لیست بلاگ</a>
+                    <a href="{% url 'blog:article_list' %}">وبلاگ</a>
                 </li>
                 <li>
                     <a href="{% url 'core:contact' %}">تماس با ما</a>
@@ -227,7 +227,7 @@
                 </li>
                 <li class="list_style">
                     <i class="fa fa-newspaper icon-icon" aria-hidden="true"></i>
-                    <a href="category-blog.html" class="list__link">لیست بلاگ</a>
+                    <a href="{% url 'blog:article_list' %}" class="list__link">وبلاگ</a>
                 </li>
 
                 <li class="list_style">
