@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block content %}
+    <main class="cart-page default">
+        <div class="container">
+            <div class="row">
+                <div class="single_blog_content col-12 col-lg-9 mx-auto order-1 order-sm-1 ">
+                    <header class="card-header">
+                        <h3 class="card-title"><span>{{ article.title }}</span></h3>
+                    </header>
+                    <div class="single_blog_page">
+
+                        <div class="single_blog_box_content">
+                            <form class="form-account">
+                                <div class="row">
+
+                                    <div class="col-md-12 col-sm-12">
+
+                                        {% if article.image %}
+                                            <img src="{{ article.image.url }}" alt="{{ article.title|truncatewords:13 }}"/>
+                                        {% else %}
+                                            <img src="{% static 'img/article_image_not_found.jpg' %}" alt="{{ article.title|truncatewords:13 }}"/>
+                                        {% endif %}
+                                        <div class="data_det">
+                                            <span class="publish_date">
+                                                <i class="fa fa-clock"></i>
+                                                {{ article.created_at|to_jalali:'%d %b %Y' }}
+                                            </span>
+                                            <span class="author">
+                                                <i class="fa fa-user-alt"></i>
+                                                {% if article.author.profile.first_name and article.author.profile.last_name %}
+                                                    {{ article.author.profile.first_name }} {{ article.author.profile.last_name }}
+                                                {% else %}
+                                                    {{ article.author.username }}
+                                                {% endif %}
+                                            </span>
+                                            <span class="categoey">
+                                                <i class="fa fa-folder"></i>
+                                                {% for category in article.category.all %}
+                                                    <a href="{% url 'blog:article_category' category.slug %}" rel="category tag">
+                                                        {{ category.title }}{% if not forloop.last %} ،{% endif %}
+                                                    </a>
+                                                {% endfor %}
+                                            </span>
+                                            <span class="visitors">
+                                                <i class="fa fa-eye"></i> {{ article.views }} بازدید
+                                            </span>
+                                        </div>
+                                        <p>{{ article.description|safe }}</p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-3 ">
+
+                    <div class="sidebar_blog">
+                        <div class="widget_blog">
+                            <div class="widget_blog_headbox">
+                                <h3> دسته بندی ها </h3>
+                            </div>
+                            <div class="blog_list_widget_blog">
+                                <div class="widget_blog_groups">
+                                    <ul class="widget_blog_posts">
+                                        {% for category in categories %}
+                                            <li><a class="widget_blog_title_link" href="{% url 'blog:article_category' category.slug %}">{{ category.title }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div><!-- end blog-list -->
+                        </div>
+                        <div class="widget_blog marg_top20">
+                            <div class="widget_blog_headbox">
+                                <h3>آخرین مقالات </h3>
+                            </div>
+                            <div class="blog_list_widget_blog">
+                                <div class="widget_blog_groups">
+                                    <ul class="widget_blog_posts">
+                                        {% for article in latest_articles %}
+                                            <li><a class="widget_blog_title_link" href="{% url 'blog:article_detail' article.slug %}">{{ article.title|truncatewords:6 }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div><!-- end blog-list -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}

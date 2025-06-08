@@ -57,3 +57,22 @@ def category_article(request, slug):
     }
     return render(request, 'blog/category_article.html', context)
 
+
+def article_detail(request, slug):
+    categories = Category.objects.all()
+    article = get_object_or_404(Article, slug=slug)
+    latest_articles = Article.objects.filter(status='published').exclude(id=article.id).order_by('-created_at')[:6]
+
+    viewed_article = request.session.get('viewed_article', [])
+    if article.id not in viewed_article:
+        article.views += 1
+        article.save(update_fields=['views'])
+        viewed_article.append(article.id)
+        request.session['viewed_article'] = viewed_article
+
+    context = {
+        'categories': categories,
+        'article': article,
+        'latest_articles': latest_articles,
+    }
+    return render(request, 'blog/article_detail.html', context)

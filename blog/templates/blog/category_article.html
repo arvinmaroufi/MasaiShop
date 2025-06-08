@@ -28,14 +28,14 @@
                             {% for article in articles %}
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-12  ">
                                     <div class="blog_tag">
-                                        <a href="#">
+                                        <a href="{% url 'blog:article_detail' article.slug %}">
                                             {% if article.image %}
                                                 <img src="{{ article.image.url }}" class="img-fluid" alt="{{ article.title|truncatewords:13 }}">
                                             {% else %}
                                                 <img src="{% static 'img/article_image_not_found.jpg' %}" class="img-fluid" alt="{{ article.title|truncatewords:13 }}">
                                             {% endif %}
                                         </a>
-                                        <a href="#">
+                                        <a href="{% url 'blog:article_detail' article.slug %}">
                                             <h2 class="Blog_title">
                                                 {{ article.title|truncatewords:13 }}
                                             </h2>
@@ -108,7 +108,7 @@
                                 <div class="widget_blog_groups">
                                     <ul class="widget_blog_posts">
                                         {% for article in latest_articles %}
-                                            <li><a class="widget_blog_title_link" href="#">{{ article.title|truncatewords:6 }}</a></li>
+                                            <li><a class="widget_blog_title_link" href="{% url 'blog:article_detail' article.slug %}">{{ article.title|truncatewords:6 }}</a></li>
                                         {% endfor %}
                                     </ul>
                                 </div>
