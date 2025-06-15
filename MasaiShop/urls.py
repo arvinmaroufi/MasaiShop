@@ -11,6 +11,7 @@ urlpatterns = [
     path('account/', include('accounts.urls')),
     path('blog/', include('blog.urls')),
     path('cart/', include('cart.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     # redirect urls
     path('products/category/', views.redirect_to_home, name='redirect_to_home'),
