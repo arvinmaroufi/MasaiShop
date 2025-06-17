@@ -32,3 +32,43 @@ def cart(request):
     }
     return render(request, 'cart/cart.html', context)
 
+
+@login_required
+def add_to_cart(request, product_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            product = get_object_or_404(Product, pk=product_id)
+            color_id = data.get('color_id')
+            quantity = int(data.get('quantity', 1))
+
+            if quantity > product.stock_count:
+                return JsonResponse({'success': False, 'message': 'تعداد درخواستی بیشتر از موجودی است'})
+
+            cart, created = Cart.objects.get_or_create(user=request.user)
+
+            # اگر محصول فقط یک رنگ دارد، از همان رنگ استفاده کنید
+            if product.color.count() == 1:
+                color = product.color.first()
+            else:
+                color = get_object_or_404(ProductColor, pk=color_id) if color_id else None
+
+            cart_item, created = CartItem.objects.get_or_create(
+                cart=cart,
+                product=product,
+                color=color,
+                defaults={'quantity': quantity}
+            )
+
+            if not created:
+                new_quantity = cart_item.quantity + quantity
+                if new_quantity > product.stock_count:
+                    return JsonResponse({'success': False, 'message': 'تعداد درخواستی بیشتر از موجودی است'})
+                cart_item.quantity = new_quantity
+                cart_item.save()
+
+            return JsonResponse({'success': True, 'cart_count': cart.items.count()})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    return JsonResponse({'success': False, 'message': 'درخواست نامعتبر'})
+
