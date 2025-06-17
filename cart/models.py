@@ -84,3 +84,33 @@ class CartItem(models.Model):
         return self.product.price * self.quantity
 
 
+class Order(models.Model):
+    ORDER_STATUS = (
+        ('pending', 'در انتظار پرداخت'),
+        ('paid', 'پرداخت شده'),
+        ('processing', 'در حال پردازش'),
+        ('shipped', 'ارسال شده'),
+        ('delivered', 'تحویل داده شده'),
+        ('cancelled', 'لغو شده'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name='کاربر')
+    order_number = ShortUUIDField(length=10, max_length=10, alphabet="1234567890", unique=True, verbose_name="شماره سفارش")
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, verbose_name='آدرس')
+    cart = models.OneToOneField(Cart, on_delete=models.SET_NULL, null=True, verbose_name='سبد خرید')
+    total_price = models.IntegerField(verbose_name='مبلغ کل')
+    coupon_discount = models.IntegerField(default=0, verbose_name='تخفیف کوپن')
+    shipping_cost = models.IntegerField(default=0, verbose_name='هزینه ارسال')
+    final_price = models.IntegerField(verbose_name='مبلغ قابل پرداخت')
+    status = models.CharField(max_length=20, choices=ORDER_STATUS, default='pending', verbose_name='وضعیت سفارش')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ به‌روزرسانی')
+
+    class Meta:
+        verbose_name = 'سفارش'
+        verbose_name_plural = 'سفارشات'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"سفارش {self.order_number} - {self.user.username}"
+

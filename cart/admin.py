@@ -45,3 +45,17 @@ class CartItemAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
     @admin.display(description='تاریخ ایجاد', ordering='created_at')
     def get_created_at_jalali(self, obj):
         return datetime2jalali(obj.created_at).strftime('%a, %d %b %Y')
+
+
+@admin.register(models.Order)
+class OrderAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
+    list_display = ['user', 'order_number', 'address', 'cart', 'total_price', 'coupon_discount', 'shipping_cost',
+                    'final_price', 'status', 'get_created_at_jalali', 'get_updated_at_jalali']
+
+    @admin.display(description='تاریخ ایجاد', ordering='created_at')
+    def get_created_at_jalali(self, obj):
+        return datetime2jalali(obj.created_at).strftime('%a, %d %b %Y')
+
+    @admin.display(description='تاریخ به‌روزرسانی', ordering='updated_at')
+    def get_updated_at_jalali(self, obj):
+        return datetime2jalali(obj.updated_at).strftime('%a, %d %b %Y')
