@@ -123,3 +123,27 @@ def update_cart_item(request, item_id):
             return JsonResponse({'success': False, 'message': str(e)})
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر'})
 
+
+@login_required
+def remove_cart_item(request, item_id):
+    if request.method == 'POST':
+        try:
+            cart_item = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
+            cart_item.delete()
+
+            cart = Cart.objects.get(user=request.user)
+            total_price = sum(item.total_price for item in cart.items.all())
+            shipping_cost = 50000 if total_price < 10500000 else 0
+            final_price = total_price - cart.coupon_discount + shipping_cost
+
+            return JsonResponse({
+                'success': True,
+                'cart_count': cart.items.count(),
+                'total_price': total_price,
+                'shipping_cost': shipping_cost,
+                'final_price': final_price
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    return JsonResponse({'success': False, 'message': 'درخواست نامعتبر'})
+
