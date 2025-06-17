@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% block title %}انتخاب آدرس و روش پرداخت{% endblock %}
+{% load static %}
+{% load custom_filters %}
+{% load jalali_tags %}
+
+{% block content %}
+    <style>
+        .address-section {
+            margin-bottom: 30px;
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .address-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #252f42;
+            margin: 0;
+        }
+
+        .add-address-btn {
+            font-size: 14px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .address-content {
+            background: #f1f9fa;
+            border: 2px solid #e1e2e7;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 3px 5px 0px #e8e8e8;
+            position: relative;
+        }
+
+        .address-box {
+            position: relative;
+            padding: 15px;
+        }
+
+        .default-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: -webkit-linear-gradient(#61bec3, #46a9ae);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #46a9ae;
+            border-radius: 5px;
+        }
+
+        .address-details p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #515151;
+        }
+
+        .address-details p strong {
+            color: #252f42;
+            margin-left: 1px;
+        }
+
+        @media screen and (max-width: 991px) {
+            .address-content {
+                margin: 0 20px;
+                padding: 15px;
+            }
+
+            .address-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .add-address-btn {
+                margin-top: 10px;
+            }
+        }
+
+        @media screen and (max-width: 540px) {
+            .address-content {
+                padding: 10px;
+            }
+
+            .address-title {
+                font-size: 16px;
+            }
+
+            .address-details p {
+                font-size: 12px;
+            }
+
+            .default-label {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+        }
+    </style>
+    <main class="cart-page default">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <ul class="order-steps">
+                        <li>
+                            <a href="{% url 'cart:cart' %}">
+                                <span>سبدخرید</span>
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="{% url 'cart:shopping_payment' %}" class="active active2">
+                                <span>روش پرداخت</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="disabled">
+                                <span>پایان خرید</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="cart-page-content col-xl-12 col-lg-12 col-md-12">
+                    <header class="card-header">
+                        <h3 class="card-title"><span>انتخاب آدرس و روش پرداخت</span></h3>
+                    </header>
+                    <div class="row cart_details">
+                        <div class="cart-page-content col-xl-8 col-lg-7 col-md-7">
+                            <!-- Address Section -->
+                            <div class="address-section">
+                                <div class="address-header">
+                                    <h4 class="address-title">آدرس تحویل</h4>
+                                    <a href="#" class="btn btn-second-masai add-address-btn">اضافه کردن آدرس</a>
+                                </div>
+                                <div class="address-content">
+                                    {% if default_address %}
+                                        <div class="address-box">
+                                            <span class="default-label">پیش فرض</span>
+                                            <div class="address-details">
+                                                <p><strong>عنوان آدرس:</strong> {{ default_address.title }}</p>
+                                                <p><strong>نام تحویل
+                                                    گیرنده:</strong> {{ default_address.receiver_name }}</p>
+                                                <p>
+                                                    <strong>آدرس:</strong> {{ default_address.city }}، {{ default_address.province }}، {{ default_address.full_address }}
+                                                </p>
+                                                <p><strong>کد پستی:</strong> {{ default_address.postal_code }}</p>
+                                                <p><strong>شماره تماس:</strong> {{ default_address.phone_number }}</p>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-warning">
+                                            شما هیچ آدرس پیش‌فرضی ندارید. لطفاً یک آدرس اضافه کنید.
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Payment Options -->
+                            <h4 class="address-title" style="margin-bottom: 20px;">روش پرداخت</h4>
+                            <div class="plans">
+                                <label class="plan basic-plan" for="pay1">
+                                    <input checked type="radio" name="plan" id="pay1"/>
+                                    <div class="plan-content">
+                                        <img loading="lazy" src="{% static 'img/ico/png-10.png' %}" alt=""/>
+                                        <div class="plan-details">
+                                            <span>پرداخت اینترنتی</span>
+                                            <p>از طریق کارت های عضو شتاب</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="cart-page-aside col-xl-4 col-lg-5 col-md-5 divider_details">
+                            <table class="table table_details">
+                                <tbody>
+                                <tr>
+                                    <td>قیمت کل سفارش:</td>
+                                    <td>{{ total_price|format_price }} <span>تومان</span></td>
+                                </tr>
+                                <tr>
+                                    <td>تخفیف:</td>
+                                    <td id="coupon-discount">
+                                        {% if cart.coupon and cart.items.count > 0 %}
+                                            {{ cart.coupon_discount|format_price }} <span>تومان</span>
+                                        {% else %}
+                                            0 <span>تومان</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>بسته‌بندی و ارسال:</td>
+                                    {% if shipping_cost %}
+                                        <td id="shipping-cost">{{ shipping_cost|format_price }} <span>تومان</span></td>
+                                    {% else %}
+                                        <td id="shipping-cost">رایگان</td>
+                                    {% endif %}
+                                </tr>
+                                <tr class="all">
+                                    <td>قیمت قابل پرداخت:</td>
+                                    <td>{{ final_price|format_price }} <span>تومان</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <a href="
+                                                {% if default_address %}{% url 'cart:successful_payment' %}{% else %}#{% endif %}"
+                                           class="btn big_btn btn-main-masai {% if not default_address %}disabled{% endif %}">
+                                            اتصال به درگاه
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
