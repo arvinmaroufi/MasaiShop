@@ -216,3 +216,40 @@ def shopping_payment(request):
     }
     return render(request, 'cart/shopping_payment.html', context)
 
+
+@login_required
+def successful_payment(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    if not cart.items.exists():
+        messages.warning(request, 'سبد خرید شما خالی است')
+        return redirect('cart:cart')
+
+    for item in cart.items.all():
+        product = item.product
+        product.stock_count -= item.quantity
+        product.sales_count += item.quantity
+        product.save()
+
+    default_address = Address.objects.filter(user=request.user, is_default=True).first()
+    total_price = sum(item.total_price for item in cart.items.all())
+    shipping_cost = 50000 if total_price < 10500000 else 0
+    final_price = total_price - cart.coupon_discount + shipping_cost
+
+    order = Order.objects.create(
+        user=request.user,
+        address=default_address,
+        cart=cart,
+        total_price=total_price,
+        coupon_discount=cart.coupon_discount,
+        shipping_cost=shipping_cost,
+        final_price=final_price,
+        status='paid'
+    )
+
+    cart.delete()
+
+    context = {
+        'order': order,
+    }
+    return render(request, 'cart/successful_payment.html', context)
+

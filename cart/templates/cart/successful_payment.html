@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}سبد خرید{% endblock %}
+{% load static %}
+{% load custom_filters %}
+{% load jalali_tags %}
+
+{% block content %}
+    <main class="cart-page default">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <ul class="order-steps">
+                        <li>
+                            <a href="{% url 'cart:cart' %}">
+                                <span>سبدخرید</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'cart:shopping_payment' %}">
+                                <span>روش پرداخت</span>
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="{% url 'cart:successful_payment' %}" class="active active3">
+                                <span>پایان خرید</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <main class="cart default">
+                    <div class="container text-center cart_empty">
+                        <img src="{% static 'img/successful-cart.png' %}" class=""/>
+                        <h6>
+                            تریک، سفارش با موفقیت دریافت شد
+                        </h6>
+                        <p>
+                            این اطمینان را به شما میدهیم که بزودی محصول خریداری شده شما را ارسال خواهیم کرد.
+                        </p>
+                        <p>
+                            کد سفارش: <b>{{ order.order_number }}</b>
+                        </p>
+                        <a href="#order_detail" class="btn btn-main-masai">مشاهده وضعیت سفارش</a>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </main>
+{% endblock %}
