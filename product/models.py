@@ -76,6 +76,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to='images/products', null=True, blank=True, verbose_name='تصویر محصول')
     status = models.CharField(choices=STATUS, max_length=10, default='published', verbose_name='وضعیت')
     views = models.IntegerField(default=0, verbose_name='بازدید ها')
+    sales_count = models.IntegerField(default=0, verbose_name='تعداد فروش')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ به‌روزرسانی')
     # General Features
