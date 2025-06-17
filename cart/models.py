@@ -64,3 +64,23 @@ class Cart(models.Model):
         return self.total_price - self.coupon_discount
 
 
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items', verbose_name='سبد خرید')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='محصول')
+    quantity = models.PositiveIntegerField(default=1, verbose_name='تعداد')
+    color = models.ForeignKey(ProductColor, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='رنگ انتخاب شده')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+
+    class Meta:
+        verbose_name = 'آیتم سبد خرید'
+        verbose_name_plural = 'آیتم‌های سبد خرید'
+        unique_together = ['cart', 'product', 'color']
+
+    def __str__(self):
+        return f"{self.product.title} ({self.quantity})"
+
+    @property
+    def total_price(self):
+        return self.product.price * self.quantity
+
+
