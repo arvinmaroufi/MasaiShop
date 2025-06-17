@@ -147,3 +147,50 @@ def remove_cart_item(request, item_id):
             return JsonResponse({'success': False, 'message': str(e)})
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر'})
 
+
+@login_required
+def apply_coupon(request):
+    if request.method == 'POST':
+        coupon_code = request.POST.get('coupon_code')
+        try:
+            cart = Cart.objects.get(user=request.user)
+            if not cart.items.exists():
+                messages.error(request, 'سبد خرید شما خالی است')
+                return redirect('cart:cart')
+
+            coupon = Coupon.objects.get(code=coupon_code)
+            if not coupon.is_valid():
+                messages.error(request, 'کد تخفیف معتبر نیست یا منقضی شده است')
+                return redirect('cart:cart')
+
+            if cart.coupon:
+                messages.warning(request, 'یک کد تخفیف قبلاً اعمال شده است')
+                return redirect('cart:cart')
+
+            total_price = sum(item.total_price for item in cart.items.all())
+
+            if coupon.discount_type == 'percentage':
+                discount = int((total_price * coupon.discount_value) / 100)
+            else:
+                discount = coupon.discount_value
+
+            discount = min(discount, total_price)
+
+            cart.coupon = coupon
+            cart.coupon_discount = discount
+            cart.save()
+
+            coupon.usage_count += 1
+            coupon.save()
+
+            if coupon.max_usage and coupon.usage_count >= coupon.max_usage:
+                coupon.is_active = False
+                coupon.save()
+
+            messages.success(request, f'کد تخفیف {coupon.code} با موفقیت اعمال شد ({discount:,} تومان تخفیف)')
+        except Coupon.DoesNotExist:
+            messages.error(request, 'کد تخفیف وارد شده معتبر نیست')
+        return redirect('cart:cart')
+    return redirect('cart:cart')
+
+
