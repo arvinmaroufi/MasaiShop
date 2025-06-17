@@ -37,7 +37,7 @@ class ProductColorAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
 
 @admin.register(models.Product)
 class ProductAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
-    list_display = ['pid', 'vendor', 'short_title', 'old_price', 'price', 'stock_count', 'views', 'status', 'product_image', 'get_created_at_jalali']
+    list_display = ['pid', 'vendor', 'short_title', 'old_price', 'price', 'stock_count', 'sales_count', 'views', 'status', 'product_image', 'get_created_at_jalali']
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ['old_price', 'price', 'stock_count', 'status']
     list_filter = ['status']
