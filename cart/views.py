@@ -47,7 +47,6 @@ def add_to_cart(request, product_id):
 
             cart, created = Cart.objects.get_or_create(user=request.user)
 
-            # اگر محصول فقط یک رنگ دارد، از همان رنگ استفاده کنید
             if product.color.count() == 1:
                 color = product.color.first()
             else:
@@ -68,6 +67,58 @@ def add_to_cart(request, product_id):
                 cart_item.save()
 
             return JsonResponse({'success': True, 'cart_count': cart.items.count()})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    return JsonResponse({'success': False, 'message': 'درخواست نامعتبر'})
+
+
+@login_required
+def update_cart_item(request, item_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            quantity = data.get('quantity')
+            color_id = data.get('color_id')
+
+            cart_item = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
+
+            if color_id and str(color_id) != str(cart_item.color.id if cart_item.color else ''):
+                new_color = get_object_or_404(ProductColor, pk=color_id)
+                existing_item = CartItem.objects.filter(
+                    cart=cart_item.cart,
+                    product=cart_item.product,
+                    color=new_color
+                ).exclude(pk=cart_item.id).first()
+
+                if existing_item:
+                    existing_item.quantity += cart_item.quantity
+                    existing_item.save()
+                    cart_item.delete()
+                    cart_item = existing_item
+                else:
+                    cart_item.color = new_color
+                    cart_item.save()
+
+            if quantity:
+                quantity = int(quantity)
+                if quantity > cart_item.product.stock_count:
+                    return JsonResponse({'success': False, 'message': 'تعداد درخواستی بیشتر از موجودی است'})
+                cart_item.quantity = quantity
+                cart_item.save()
+
+            cart = cart_item.cart
+            total_price = sum(item.total_price for item in cart.items.all())
+            shipping_cost = 50000 if total_price < 10500000 else 0
+            final_price = total_price - cart.coupon_discount + shipping_cost
+
+            return JsonResponse({
+                'success': True,
+                'item_price': cart_item.total_price,
+                'total_price': total_price,
+                'shipping_cost': shipping_cost,
+                'final_price': final_price,
+                'cart_count': cart.items.count()
+            })
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر'})
