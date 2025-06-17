@@ -25,6 +25,7 @@ def home(request):
         discount=models.ExpressionWrapper(
             (models.F('old_price') - models.F('price')) * 100 / models.F('old_price'),
             output_field=models.IntegerField())).filter(discount__gt=0).order_by('-discount')[:8]
+    best_selling_products = Product.objects.filter(status='published').order_by('-sales_count')[:7]
 
     context = {
         'main_sliders': main_sliders,
@@ -37,6 +38,7 @@ def home(request):
         'latest_products': latest_products,
         'latest_articles': latest_articles,
         'discounted_products': discounted_products,
+        'best_selling_products': best_selling_products,
     }
     return render(request, 'core/home.html', context)
 

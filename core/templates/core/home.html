@@ -218,7 +218,8 @@
                                     <div class="col-6 col-lg-3">
                                         <div class="widget-banner card border_all">
                                             <a href="{{ banner.url }}">
-                                                <img class="img-fluid" src="{{ banner.image.url }}" alt="{{ banner.title }}">
+                                                <img class="img-fluid" src="{{ banner.image.url }}"
+                                                     alt="{{ banner.title }}">
                                             </a>
                                         </div>
                                     </div>
@@ -301,7 +302,8 @@
                                     <div class="col-12 col-lg-6">
                                         <div class="widget-banner card border_all">
                                             <a href="{{ banner.url }}">
-                                                <img class="img-fluid" src="{{ banner.image.url }}" alt="{{ banner.title }}">
+                                                <img class="img-fluid" src="{{ banner.image.url }}"
+                                                     alt="{{ banner.title }}">
                                             </a>
                                         </div>
                                     </div>
@@ -309,188 +311,70 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="widget widget-product card border_all bglight">
-                                <header class="card-header">
-                                    <h3 class="card-title">
-                                        <span><img src="{% static 'img/seller_1.png' %}"/></span>
-                                    </h3>
-                                </header>
-                                <div class="product-carousel owl-carousel owl-theme">
-                                    <div class="item">
-                                        <a href="#">
-                                            <img src="{% static 'img/product_img/p_9.jpg' %}" class="img-fluid" alt="">
-                                        </a>
-                                        <h2 class="product_title">
-                                            <a href="#"> گوشی شیائومی مدل Poco X4 Pro 5G </a>
-                                        </h2>
-                                        <div class="price">
-                                            <del><span>13,159,000<span>تومان</span></span></del>
-                                            <span class="discount_badge">5%</span>
+                    {% if best_selling_products %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="widget widget-product card border_all bglight">
+                                    <header class="card-header">
+                                        <h3 class="card-title">
+                                            <span><img src="{% static 'img/seller_1.png' %}"/></span>
+                                        </h3>
+                                    </header>
+                                    <div class="product-carousel owl-carousel owl-theme">
+                                        {% for product in best_selling_products %}
+                                            <div class="item">
+                                                <a href="{% url 'product:product_detail' product.pid product.slug %}">
+                                                    {% if product.image %}
+                                                        <img src="{{ product.image.url }}" class="img-fluid"
+                                                             alt="{{ product.title|truncatewords:10 }}">
+                                                    {% else %}
+                                                        <img src="{% static 'img/product_image_not_found.jpg' %}"
+                                                             class="img-fluid"
+                                                             alt="{{ product.title|truncatewords:10 }}">
+                                                    {% endif %}
+                                                    {% if product.stock_count == 0 %}
+                                                        <img src="{% static 'img/img_icon.png' %}" class="type_icon">
+                                                    {% endif %}
+                                                </a>
+                                                <h2 class="product_title">
+                                                    <a href="{% url 'product:product_detail' product.pid product.slug %}">{{ product.title }}</a>
+                                                </h2>
+                                                <div class="price">
+                                                    {% if product.old_price %}
+                                                        <del>
+                                                            <span>{{ product.old_price|format_price }}<span>تومان</span></span>
+                                                        </del>
+                                                        <span class="discount_badge">{{ product.discount_percentage }}%</span>
+                                                        <ins>
+                                                            <span>{{ product.price|format_price }}<span>تومان</span></span>
+                                                        </ins>
+                                                    {% else %}
+                                                        <ins>
+                                                            <span>{{ product.price|format_price }}<span>تومان</span></span>
+                                                        </ins>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="product-seller-details product-seller-details-item-grid">
+                                                        <span class="search_prod_icon">
+                                                            <i class="fa fa-search search_icon_search"
+                                                               aria-hidden="true"></i>
+                                                            <i class="fa fa-heart search_icon_like"
+                                                               aria-hidden="true"></i>
+                                                        </span>
 
-                                            <ins><span>12,000,000<span>تومان</span></span></ins>
-                                        </div>
-                                        <div class="product-seller-details product-seller-details-item-grid">
-                                                <span class="search_prod_icon">
-                                                    <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                    <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                </span>
-
-                                            <span class="search_prod_btn">
-                                                    <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                       aria-hidden="true"></i>
-                                                </span>
-                                        </div>
+                                                    <span class="search_prod_btn">
+                                                            <i class="fa fa fa-cart-arrow-down search_icon_cart"
+                                                               aria-hidden="true"></i>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                     </div>
-                                    <div class="item">
-                                        <a href="#">
-                                            <img src="{% static 'img/product_img/p_7.jpg' %}" class="img-fluid" alt="">
-                                        </a>
-                                        <h2 class="product_title">
-                                            <a href="#"> گوشی اپل مدل Iphone 13 Pro Max </a>
-                                        </h2>
-                                        <div class="price">
-                                            <del><span>72,990,000<span>تومان</span></span></del>
-                                            <span class="discount_badge">2%</span>
 
-                                            <ins><span>68,280,000<span>تومان</span></span></ins>
-                                        </div>
-                                        <div class="product-seller-details product-seller-details-item-grid">
-                                                <span class="search_prod_icon">
-                                                    <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                    <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                </span>
-
-                                            <span class="search_prod_btn">
-                                                    <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                       aria-hidden="true"></i>
-                                                </span>
-                                        </div>
-                                    </div>
-                                    <div class="item">
-                                        <a href="#">
-                                            <img src="{% static 'img/product_img/p_15.jpg' %}" class="img-fluid" alt="">
-                                        </a>
-                                        <h2 class="product_title">
-                                            <a href="#"> گوشی موبایل سامسونگ گلکسی A32 </a>
-                                        </h2>
-                                        <div class="price">
-                                            <del><span>18,799,000<span>تومان</span></span></del>
-                                            <span class="discount_badge">2%</span>
-
-                                            <ins><span>16,699,000<span>تومان</span></span></ins>
-                                        </div>
-                                        <div class="product-seller-details product-seller-details-item-grid">
-                                                <span class="search_prod_icon">
-                                                    <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                    <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                </span>
-
-                                            <span class="search_prod_btn">
-                                                    <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                       aria-hidden="true"></i>
-                                                </span>
-                                        </div>
-                                    </div>
-                                    <div class="item">
-                                        <a href="#">
-                                            <img src="{% static 'img/product_img/p_17.jpg' %}" class="img-fluid" alt="">
-                                        </a>
-                                        <h2 class="product_title">
-                                            <a href="#"> گوشی موبایل سامسونگ گلکسی A23</a>
-                                        </h2>
-                                        <div class="price">
-                                            <span>15,780,000<span>تومان</span></span>
-                                        </div>
-                                        <div class="product-seller-details product-seller-details-item-grid">
-                                                <span class="search_prod_icon">
-                                                    <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                    <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                </span>
-
-                                            <span class="search_prod_btn">
-                                                    <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                       aria-hidden="true"></i>
-                                                </span>
-                                        </div>
-                                    </div>
-                                    <div class="item">
-                                        <a href="#">
-                                            <img src="{% static 'img/product_img/p_19.jpg' %}" class="img-fluid" alt="">
-                                        </a>
-                                        <h2 class="product_title">
-                                            <a href="#"> گوشی موبایل ردمی نوت 11SE شیائومی </a>
-                                        </h2>
-                                        <div class="price">
-                                            <del><span>25,156,000<span>تومان</span></span></del>
-                                            <span class="discount_badge">2%</span>
-
-                                            <ins><span>16,255,000<span>تومان</span></span></ins>
-                                        </div>
-                                        <div class="product-seller-details product-seller-details-item-grid">
-                                                <span class="search_prod_icon">
-                                                    <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                    <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                </span>
-
-                                            <span class="search_prod_btn">
-                                                    <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                       aria-hidden="true"></i>
-                                                </span>
-                                        </div>
-                                    </div>
-                                    <div class="item">
-                                        <a href="#">
-                                            <img src="{% static 'img/product_img/p_21.jpg' %}" class="img-fluid" alt="">
-                                        </a>
-                                        <h2 class="product_title">
-                                            <a href="#"> اپل مدل Iphone 14 Pro Max </a>
-                                        </h2>
-                                        <div class="price">
-                                            <span>79,279,000<span>تومان</span></span>
-                                        </div>
-                                        <div class="product-seller-details product-seller-details-item-grid">
-                                                <span class="search_prod_icon">
-                                                    <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                    <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                </span>
-
-                                            <span class="search_prod_btn">
-                                                    <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                       aria-hidden="true"></i>
-                                                </span>
-                                        </div>
-                                    </div>
-                                    <div class="item">
-                                        <a href="#">
-                                            <img src="{% static 'img/product_img/p_20.jpg' %}" class="img-fluid" alt="">
-                                        </a>
-                                        <h2 class="product_title">
-                                            <a href="#"> گوشی موبایل ردمی نوت 15 شیائومی </a>
-                                        </h2>
-                                        <div class="price">
-                                            <span>28,450,000<span>تومان</span></span>
-                                        </div>
-                                        <div class="product-seller-details product-seller-details-item-grid">
-                                                <span class="search_prod_icon">
-                                                    <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                    <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                </span>
-
-                                            <span class="search_prod_btn">
-                                                    <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                       aria-hidden="true"></i>
-                                                </span>
-                                        </div>
-                                    </div>
                                 </div>
-                                <a href="#" class="view_more">مشاهده بیشتر </a>
-
                             </div>
                         </div>
-                    </div>
-
+                    {% endif %}
 
                 </div>
 
@@ -502,7 +386,8 @@
                             <div class="col-12">
                                 <div class="widget widget-banner card border_all">
                                     <a href="{{ single_banner.url }}">
-                                        <img class="img-fluid" src="{{ single_banner.image.url }}" alt="{{ single_banner.title }}">
+                                        <img class="img-fluid" src="{{ single_banner.image.url }}"
+                                             alt="{{ single_banner.title }}">
                                     </a>
                                 </div>
                             </div>
@@ -580,33 +465,36 @@
                             <div class="Blog-carousel owl-carousel owl-theme">
                                 {% for article in latest_articles %}
                                     <div class="item">
-                                    <a href="{% url 'blog:article_detail' article.slug %}">
-                                        {% if article.image %}
-                                            <img src="{{ article.image.url }}" class="img-fluid" alt="{{ article.title|truncatewords:13 }}">
-                                        {% else %}
-                                            <img src="{% static 'img/article_image_not_found.jpg' %}" class="img-fluid" alt="{{ article.title|truncatewords:13 }}">
-                                        {% endif %}
-                                    </a>
-                                    <a href="{% url 'blog:article_detail' article.slug %}">
-                                        <h2 class="Blog_title">
-                                            {{ article.title|truncatewords:13 }}
-                                        </h2>
-                                    </a>
-                                    <div class="Blog_list">
+                                        <a href="{% url 'blog:article_detail' article.slug %}">
+                                            {% if article.image %}
+                                                <img src="{{ article.image.url }}" class="img-fluid"
+                                                     alt="{{ article.title|truncatewords:13 }}">
+                                            {% else %}
+                                                <img src="{% static 'img/article_image_not_found.jpg' %}"
+                                                     class="img-fluid" alt="{{ article.title|truncatewords:13 }}">
+                                            {% endif %}
+                                        </a>
+                                        <a href="{% url 'blog:article_detail' article.slug %}">
+                                            <h2 class="Blog_title">
+                                                {{ article.title|truncatewords:13 }}
+                                            </h2>
+                                        </a>
+                                        <div class="Blog_list">
                                         <span class="Blog_author">
                                             <i class="fa fa-user"></i>
                                             {% if article.author.profile.first_name and article.author.profile.last_name %}
-                                                    {{ article.author.profile.first_name }} {{ article.author.profile.last_name }}
-                                                {% else %}
-                                                    {{ article.author.username }}
-                                                {% endif %}
+                                                {{ article.author.profile.first_name }}
+                                                {{ article.author.profile.last_name }}
+                                            {% else %}
+                                                {{ article.author.username }}
+                                            {% endif %}
                                         </span>
-                                        <span class="Blog_Date">
+                                            <span class="Blog_Date">
                                             <i class="fa fa-calendar "></i>
                                             {{ article.created_at|to_jalali:'%d %b %Y' }}
                                         </span>
+                                        </div>
                                     </div>
-                                </div>
                                 {% endfor %}
                             </div>
                         </div>
