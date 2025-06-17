@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="fa">
 
@@ -57,7 +58,8 @@
 
                 <ul>
                     <li><a href="#"><i class="fa fa-user-large colormain" aria-hidden="true"></i></a></li>
-                    <li><a href="#"><i class="fa fa-cart-arrow-down colormain" aria-hidden="true"></i></a></li>
+                    <li><a href="{% url 'cart:cart' %}"><i class="fa fa-cart-arrow-down colormain"
+                                                           aria-hidden="true"></i></a></li>
                 </ul>
             </div>
         </div>
@@ -130,73 +132,68 @@
                     </div>
                     <div class="cart dropdown masai_dropdown">
                         <span class="divider"></span>
-
-                        <a href="#" class="dropdown-toggle iconhead" data-toggle="dropdown" id="navbar_a">
+                        <a href="javascript:void(0)" class="dropdown-toggle iconhead" data-toggle="dropdown"
+                           id="navbar_a">
                             <i class="fa fa-cart-arrow-down font-20" aria-hidden="true"></i>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbar_a">
-
-
                             <ul class="m_cart-list">
-                                <li class="m_cart_li1">
-                                    <a href="single-product.html" class="m_cart-item">
-                                        <i class="fa fa-times" aria-hidden="true"></i>
-
-
-                                        <div class="m_cart-item-content">
-                                            <div class="m_cart-item-image">
-                                                <img src="{% static 'img/product_img/p_6.jpg' %}"/>
-                                            </div>
-                                            <div class="m_cart-item-details">
-                                                <div class="m_cart-item-title">
-                                                    ساعت هوشمند امیزفیت
-                                                </div>
-                                                <div class="m_cart-item-params">
-                                                    <div class="m_cart-item-props">
-                                                        <span>تعداد : 2</span>
-                                                        <span>رنگ: سبز ارتشی</span>
+                                {% if cart_items %}
+                                    {% for item in cart_items %}
+                                        <li class="m_cart_li1">
+                                            <a href="{% url "product:product_detail" item.product.pid item.product.slug %}"
+                                               class="m_cart-item">
+                                                <i class="fa fa-times remove-cart-item" aria-hidden="true"
+                                                   data-item-id="{{ item.id }}"></i>
+                                                <div class="m_cart-item-content">
+                                                    <div class="m_cart-item-image">
+                                                        {% if item.product.image %}
+                                                            <img src="{{ item.product.image.url }}"
+                                                                 alt="{{ item.product.title|truncatewords:5 }}"/>
+                                                        {% else %}
+                                                            <img src="{% static 'img/product_image_not_found.jpg' %}"
+                                                                 alt="{{ item.product.title|truncatewords:5 }}"/>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="m_cart-item-details">
+                                                        <div class="m_cart-item-title">
+                                                            {{ item.product.title|truncatewords:3 }}
+                                                        </div>
+                                                        <div class="m_cart-item-params">
+                                                            <div class="m_cart-item-props">
+                                                                <span>تعداد: {{ item.quantity }}</span>
+                                                                {% if item.color %}
+                                                                    <span>رنگ: {{ item.color.title }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="m_cart-item-price">
+                                                                {{ item.total_price|format_price }} تومان
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="m_cart_li2">
-                                    <a href="single-product.html" class="m_cart-item">
-                                        <i class="fa fa-times" aria-hidden="true"></i>
-
-
-                                        <div class="m_cart-item-content">
-
-                                            <div class="m_cart-item-details">
-                                                <div class="m_cart-item-title">
-                                                    شیائومی مدل Poco X4
-                                                </div>
-                                                <div class="m_cart-item-params">
-                                                    <div class="m_cart-item-props">
-                                                        <span>تعداد : 1</span>
-                                                        <span>رنگ: مشکی</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="m_cart-item-image">
-                                                <img src="{% static 'img/product_img/p_9.jpg' %}"/>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="text-center py-3">
+                                        سبد خرید شما خالی است
+                                    </li>
+                                {% endif %}
                             </ul>
-                            <div class="m_cart-header">
-                                <div class="m_cart-total">
-                                    <span>مجموع سبد:</span>
-                                    <span> ۳۵,۲۵۳,۵۰۰</span>
-                                    <span> تومان</span>
+                            {% if cart_items %}
+                                <div class="m_cart-header">
+                                    <div class="m_cart-total">
+                                        <span>مجموع سبد:</span>
+                                        <span>{{ cart_total|format_price }}</span>
+                                        <span> تومان</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="btn_cart">
-                                <a href="cart.html" class="btn btn_sabad">مشاهده سبد</a>
-                                <a href="Final-payment.html" class="btn btn_pardakht btn-main-masai">پرداخت</a>
-                            </div>
+                                <div class="btn_cart">
+                                    <a href="{% url 'cart:cart' %}" class="btn btn_sabad">مشاهده سبد</a>
+                                    <a href="{% url 'cart:shopping_payment' %}" class="btn btn_pardakht btn-main-masai">پرداخت</a>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -206,7 +203,8 @@
         <nav class="nav_header">
             <ul class="nav__ullist">
                 <li class="list_style">
-                    <i class="fa fa-bars icon-icon" aria-hidden="true"></i><a href="javascript:void(0)" class="list__link">دسته بندی
+                    <i class="fa fa-bars icon-icon" aria-hidden="true"></i><a href="javascript:void(0)"
+                                                                              class="list__link">دسته بندی
                     کالاها</a>
                     <div class="submeno">
                         <ul class="main_meno-drobdown">
@@ -421,6 +419,29 @@
             hideflash: true
         });
 
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // حذف آیتم از سبد خرید
+        $('.remove-cart-item').click(function (e) {
+            e.preventDefault();
+            var itemId = $(this).data('item-id');
+
+            $.ajax({
+                url: '/cart/remove/' + itemId + '/',
+                method: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    }
+                }
+            });
+        });
     });
 </script>
 
