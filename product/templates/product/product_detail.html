@@ -12,7 +12,8 @@
                     <nav>
                         <ul class="breadcrumb">
                             <li>
-                                <a href="{% url 'core:home' %}" style="color: #61BEC3"><i class="fa fa-home" aria-hidden="true"></i></a>
+                                <a href="{% url 'core:home' %}" style="color: #61BEC3"><i class="fa fa-home"
+                                                                                          aria-hidden="true"></i></a>
                             </li>
                             {% for category in products.category.all %}
                                 <li>
@@ -38,9 +39,12 @@
                             <div class="col-lg-5 col-md-6 col-sm-12">
                                 <div class="product-gallery default">
                                     {% if products.image %}
-                                        <img class="main_img_gallery" src="{{ products.image.url }}" alt="{{ products.title }}"/>
+                                        <img class="main_img_gallery" src="{{ products.image.url }}"
+                                             alt="{{ products.title }}"/>
                                     {% else %}
-                                        <img class="main_img_gallery" src="{% static 'img/product_image_not_found.jpg' %}" alt="{{ products.title }}"/>
+                                        <img class="main_img_gallery"
+                                             src="{% static 'img/product_image_not_found.jpg' %}"
+                                             alt="{{ products.title }}"/>
                                     {% endif %}
                                     {% if products.stock_count == 0 %}
                                         <img src="{% static 'img/sell.png' %}" class="type_icon_finished_detail">
@@ -49,7 +53,9 @@
                                         <div class="container">
                                             <div class="row gallery">
                                                 {% for image in product_image %}
-                                                    <div class="col-4 col-md-3 pd"><a href="{{ image.images.url }}" rel="prettyPhoto[gallery1]"><img src="{{ image.images.url }}" class="img-thumb" /></a></div>
+                                                    <div class="col-4 col-md-3 pd"><a href="{{ image.images.url }}"
+                                                                                      rel="prettyPhoto[gallery1]"><img
+                                                            src="{{ image.images.url }}" class="img-thumb"/></a></div>
                                                 {% endfor %}
                                             </div>
                                         </div>
@@ -119,7 +125,8 @@
                                                 <li class="list-group-item">مدل: {{ products.model }}</li>
                                             {% endif %}
                                             {% if products.brand.all %}
-                                                <li class="list-group-item"> برند: {{ products.brand.all|join:'، ' }}</li>
+                                                <li class="list-group-item">
+                                                    برند: {{ products.brand.all|join:'، ' }}</li>
                                             {% endif %}
                                         </ul>
                                     </div>
@@ -132,7 +139,8 @@
                                                 <li class="list-group-item"> ابعاد: {{ products.dimensions }}</li>
                                             {% endif %}
                                             {% if products.operating_system %}
-                                                <li class="list-group-item"> سیستم عامل : {{ products.operating_system }}</li>
+                                                <li class="list-group-item"> سیستم عامل
+                                                    : {{ products.operating_system }}</li>
                                             {% endif %}
                                         </ul>
                                     </div>
@@ -154,13 +162,15 @@
                                                 <div class="col-12 col-lg-6 col-md-6">
                                                     <div class="stock-info">
                                                         <p>موجودی انبار:
-                                                           <span style="color: #46A9AE; font-weight: bold;">{{ products.stock_count }}</span> عدد
+                                                            <span style="color: #46A9AE; font-weight: bold;">{{ products.stock_count }}</span>
+                                                            عدد
                                                         </p>
-                                                        <div class="progress" style="height: 14px; background: #f5f5f5;">
+                                                        <div class="progress"
+                                                             style="height: 14px; background: #f5f5f5;">
                                                             <div class="progress-bar"
                                                                  style="width: {{ products.stock_count }}%;
-                                                                        background-color: #46A9AE;
-                                                                        border-radius: 5px;">
+                                                                         background-color: #46A9AE;
+                                                                         border-radius: 5px;">
                                                             </div>
                                                         </div>
                                                         <small style="color: {% if products.stock_count == 0 %}#FF0000{% elif products.stock_count < 5 and products.stock_count > 0 %}#e74c3c{% else %}#46A9AE{% endif %};">
@@ -177,15 +187,36 @@
                                                 <div class="col-12 col-lg-6 col-md-6 border_left">
                                                     <div class="price space-15">
                                                         {% if products.old_price %}
-                                                            <del><span>{{ products.old_price|format_price }}<span>تومان</span></span></del>
+                                                            <del>
+                                                                <span>{{ products.old_price|format_price }}<span>تومان</span></span>
+                                                            </del>
                                                         {% endif %}
-                                                        <ins><span>{{ products.price|format_price }}<span>تومان</span></span></ins>
+                                                        <ins>
+                                                            <span>{{ products.price|format_price }}<span>تومان</span></span>
+                                                        </ins>
                                                     </div>
                                                     <div class="col-12 timer-title text--center">
                                                         {% if products.stock_count > 0 %}
-                                                            <a href="#" class="btn btn-main-masai big_btn">افزودن به سبد</a>
+                                                            {% if products.color.all.count > 1 %}
+                                                                <select id="product-color" class="form-control mb-2">
+                                                                    {% for color in products.color.all %}
+                                                                        <option value="{{ color.id }}">{{ color.title }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            {% else %}
+                                                                <input type="hidden" id="product-color"
+                                                                       value="{{ products.color.all.first.id }}">
+                                                            {% endif %}
+                                                            <input type="number" id="product-quantity" value="1" min="1"
+                                                                   max="{{ products.stock_count }}"
+                                                                   class="form-control mb-2">
+                                                            <button class="btn btn-main-masai big_btn" id="add-to-cart"
+                                                                    data-product-id="{{ products.id }}">افزودن به سبد
+                                                            </button>
                                                         {% else %}
-                                                            <button class="btn btn-main-masai big_btn" disabled>موجود نیست</button>
+                                                            <button class="btn btn-main-masai big_btn" disabled>موجود
+                                                                نیست
+                                                            </button>
                                                         {% endif %}
                                                     </div>
                                                 </div>
@@ -267,70 +298,89 @@
                                             <div class="col-12">
                                                 <ul class="list-group ">
                                                     {% if products.brand.all %}
-                                                        <li class="list-group-item">برند: {{ products.brand.all|join:'، ' }}</li>
+                                                        <li class="list-group-item">
+                                                            برند: {{ products.brand.all|join:'، ' }}</li>
                                                     {% endif %}
                                                     {% if products.model %}
                                                         <li class="list-group-item">مدل: {{ products.model }}</li>
                                                     {% endif %}
                                                     {% if products.color.all %}
-                                                        <li class="list-group-item">رنگ: {{ products.color.all|join:'، ' }}</li>
+                                                        <li class="list-group-item">
+                                                            رنگ: {{ products.color.all|join:'، ' }}</li>
                                                     {% endif %}
                                                     {% if products.weight %}
                                                         <li class="list-group-item">وزن: {{ products.weight }}</li>
                                                     {% endif %}
                                                     {% if products.dimensions %}
-                                                        <li class="list-group-item">ابعاد: {{ products.dimensions }}</li>
+                                                        <li class="list-group-item">
+                                                            ابعاد: {{ products.dimensions }}</li>
                                                     {% endif %}
                                                     {% if products.operating_system %}
-                                                        <li class="list-group-item">سیستم عامل: {{ products.operating_system }}</li>
+                                                        <li class="list-group-item">سیستم
+                                                            عامل: {{ products.operating_system }}</li>
                                                     {% endif %}
                                                     {% if products.battery_capacity %}
-                                                        <li class="list-group-item">ظرفیت باتری: {{ products.battery_capacity }}</li>
+                                                        <li class="list-group-item">ظرفیت
+                                                            باتری: {{ products.battery_capacity }}</li>
                                                     {% endif %}
                                                     {% if products.ram %}
                                                         <li class="list-group-item">حافظه موقت: {{ products.ram }}</li>
                                                     {% endif %}
                                                     {% if products.internal_memory %}
-                                                        <li class="list-group-item">حافظه داخلی: {{ products.internal_memory }}</li>
+                                                        <li class="list-group-item">حافظه
+                                                            داخلی: {{ products.internal_memory }}</li>
                                                     {% endif %}
                                                     {% if products.camera_resolution %}
-                                                        <li class="list-group-item">رزولوشن دوربین: {{ products.camera_resolution }}</li>
+                                                        <li class="list-group-item">رزولوشن
+                                                            دوربین: {{ products.camera_resolution }}</li>
                                                     {% endif %}
                                                     {% if products.connectivity %}
-                                                        <li class="list-group-item">نوع اتصال: {{ products.connectivity }}</li>
+                                                        <li class="list-group-item">نوع
+                                                            اتصال: {{ products.connectivity }}</li>
                                                     {% endif %}
                                                     {% if products.processor_generation %}
-                                                        <li class="list-group-item">نسل پردازنده: {{ products.processor_generation }}</li>
+                                                        <li class="list-group-item">نسل
+                                                            پردازنده: {{ products.processor_generation }}</li>
                                                     {% endif %}
                                                     {% if products.processor_manufacturer %}
-                                                        <li class="list-group-item">سازنده پردازنده: {{ products.processor_manufacturer }}</li>
+                                                        <li class="list-group-item">سازنده
+                                                            پردازنده: {{ products.processor_manufacturer }}</li>
                                                     {% endif %}
                                                     {% if products.processor_series %}
-                                                        <li class="list-group-item">سری پردازنده: {{ products.processor_series }}</li>
+                                                        <li class="list-group-item">سری
+                                                            پردازنده: {{ products.processor_series }}</li>
                                                     {% endif %}
                                                     {% if products.body_material %}
-                                                        <li class="list-group-item">جنس بدنه: {{ products.body_material }}</li>
+                                                        <li class="list-group-item">جنس
+                                                            بدنه: {{ products.body_material }}</li>
                                                     {% endif %}
                                                     {% if products.strap_material %}
-                                                        <li class="list-group-item">جنس بند: {{ products.strap_material }}</li>
+                                                        <li class="list-group-item">جنس
+                                                            بند: {{ products.strap_material }}</li>
                                                     {% endif %}
                                                     {% if products.display_size %}
-                                                        <li class="list-group-item">اندازه صفحه نمایش: {{ products.display_size }}</li>
+                                                        <li class="list-group-item">اندازه صفحه
+                                                            نمایش: {{ products.display_size }}</li>
                                                     {% endif %}
                                                     {% if products.bluetooth_version %}
-                                                        <li class="list-group-item">نسخه بلوتوث: {{ products.bluetooth_version }}</li>
+                                                        <li class="list-group-item">نسخه
+                                                            بلوتوث: {{ products.bluetooth_version }}</li>
                                                     {% endif %}
                                                     {% if products.antenna_count %}
-                                                        <li class="list-group-item">تعداد آنتن: {{ products.antenna_count }}</li>
+                                                        <li class="list-group-item">تعداد
+                                                            آنتن: {{ products.antenna_count }}</li>
                                                     {% endif %}
                                                     {% if products.antenna_type %}
-                                                        <li class="list-group-item">نوع آنتن: {{ products.antenna_type }}</li>
+                                                        <li class="list-group-item">نوع
+                                                            آنتن: {{ products.antenna_type }}</li>
                                                     {% endif %}
                                                     {% if products.power_source %}
-                                                        <li class="list-group-item">منبع تغذیه: {{ products.power_source }}</li>
+                                                        <li class="list-group-item">منبع
+                                                            تغذیه: {{ products.power_source }}</li>
                                                     {% endif %}
                                                     {% if products.os_support %}
-                                                        <li class="list-group-item">قابلیت پشتیبانی از سیستم عامل‌ های: {{ products.os_support }}</li>
+                                                        <li class="list-group-item">قابلیت پشتیبانی از سیستم عامل‌
+                                                            های: {{ products.os_support }}</li>
                                                     {% endif %}
                                                 </ul>
                                             </div>
@@ -342,37 +392,37 @@
                                             </header>
                                             {% if products.product_comments.all %}
                                                 <div class="comments_form default">
-                                                <ol class="comment-list">
-                                                    <!-- #comment-## -->
-                                                    {% for comment in comments %}
-                                                        {% if comment.status == 'published' %}
-                                                            <li>
-                                                                <div class="comment-body">
-                                                                    <div class="comment-author">
-                                                                        <img alt="" src="{% static 'img/profile/1.png' %}" class="avatar">
-                                                                        <div class="text-h5">
-                                                                            {% if comment.author.first_name and comment.author.last_name %}
-                                                                                {{ comment.author.first_name }} {{ comment.author.last_name }}
-                                                                            {% else %}
-                                                                                {{ comment.author.username }}
-                                                                            {% endif %}
+                                                    <ol class="comment-list">
+                                                        <!-- #comment-## -->
+                                                        {% for comment in comments %}
+                                                            {% if comment.status == 'published' %}
+                                                                <li>
+                                                                    <div class="comment-body">
+                                                                        <div class="comment-author">
+                                                                            <img alt="{{ comment.author.username }}" src="
+                                                                                    {% if comment.author.profile.image %}{{ comment.author.profile.image.url }}{% else %}{% static 'img/profile/1.png' %}{% endif %}"
+                                                                                 class="avatar">
+                                                                            <div class="text-h5">
+                                                                                {% if comment.author.profile.first_name and comment.author.profile.last_name %}
+                                                                                    {{ comment.author.profile.first_name }}
+                                                                                    {{ comment.author.profile.last_name }}
+                                                                                {% else %}
+                                                                                    {{ comment.author.username }}
+                                                                                {% endif %}
+                                                                            </div>
                                                                         </div>
+                                                                        <p>{{ comment.body }}</p>
+                                                                        <ul class="commentul">
+                                                                            <li>{{ comment.created_at|to_jalali:'%d %B %Y' }}</li>
+                                                                        </ul>
                                                                     </div>
-
-                                                                    <p>{{ comment.body }}</p>
-                                                                    <ul class="commentul">
-                                                                        <li>
-                                                                            {{ comment.created_at|to_jalali:'%d %B %Y' }}
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </li>
-                                                        {% else %}
-                                                            <li>دیدگاهی وجود ندارد!</li>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </ol>
-                                            </div>
+                                                                </li>
+                                                            {% else %}
+                                                                <li>دیدگاهی وجود ندارد!</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ol>
+                                                </div>
                                             {% else %}
                                                 <p>دیدگاهی وجود ندارد!</p>
                                             {% endif %}
@@ -387,11 +437,13 @@
                                             {% if request.user.is_authenticated %}
                                                 <form id="comment-form" class="comment">
                                                     {% csrf_token %}
-                                                    <textarea class="form-control" placeholder="متن دیدگاه" name="body" id="body" rows="4" required></textarea>
+                                                    <textarea class="form-control" placeholder="متن دیدگاه" name="body"
+                                                              id="body" rows="4" required></textarea>
                                                     <button class="btn btn-main-masai" type="submit">ثبت دیدگاه</button>
                                                 </form>
                                             {% else %}
-                                                <a href="#login" class="btn btn-main-masai">برای ثبت دیدگاه ابتدا باید وارد شوید</a>
+                                                <a href="#login" class="btn btn-main-masai">برای ثبت دیدگاه ابتدا باید
+                                                    وارد شوید</a>
                                             {% endif %}
 
                                         </div>
@@ -414,7 +466,7 @@
                         icon: 'success',
                         confirmButtonText: 'تایید',
                         confirmButtonColor: '#46A9AE',
-                        background: '#f8f9fa', // رنگ پس‌زمینه
+                        background: '#f8f9fa',
                         showClass: {
                             popup: 'animate__animated animate__fadeInDown'
                         },
@@ -446,7 +498,7 @@
                     'X-CSRFToken': csrfToken,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ body: body })
+                body: JSON.stringify({body: body})
             });
 
             const data = await response.json();
@@ -457,8 +509,14 @@
                 newComment.innerHTML = `
                     <div class="comment-body">
                         <div class="comment-author">
-                            <img alt="" src="/static/img/profile/1.png" class="avatar">
-                            <div class="text-h5">{{ request.user.username }}</div>
+                            <img alt="" src="{% if request.user.profile.image %}{{ request.user.profile.image.url }}{% else %}{% static 'img/profile/1.png' %}{% endif %}" class="avatar">
+                            <div class="text-h5">
+                                {% if request.user.profile.first_name and request.user.profile.last_name %}
+                                    {{ request.user.profile.first_name }} {{ request.user.profile.last_name }}
+                                {% else %}
+                                    {{ request.user.username }}
+                                {% endif %}
+                            </div>
                         </div>
                         <p>${body}</p>
                         <ul class="commentul">
@@ -472,10 +530,49 @@
                 if (commentsTab) {
                     commentsTab.click();
                     setTimeout(() => {
-                        document.getElementById('comments').scrollIntoView({ behavior: 'smooth' });
+                        document.getElementById('comments').scrollIntoView({behavior: 'smooth'});
                     }, 200);
                 }
             }
+        });
+
+
+        document.getElementById('add-to-cart').addEventListener('click', function () {
+            const productId = this.getAttribute('data-product-id');
+            const colorSelect = document.getElementById('product-color');
+            const colorId = colorSelect ? colorSelect.value : null;
+            const quantity = document.getElementById('product-quantity').value;
+
+            fetch(`/cart/add/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    color_id: colorId,
+                    quantity: quantity
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            text: 'محصول با موفقیت به سبد خرید اضافه شد',
+                            icon: 'success',
+                            confirmButtonText: 'تایید',
+                            confirmButtonColor: '#46A9AE'
+                        });
+                        document.getElementById('cart-count').textContent = data.cart_count;
+                    } else {
+                        Swal.fire({
+                            title: 'خطا',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonColor: '#e74c3c'
+                        });
+                    }
+                });
         });
     </script>
 {% endblock %}
