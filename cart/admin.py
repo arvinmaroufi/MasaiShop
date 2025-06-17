@@ -17,3 +17,17 @@ class CouponAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
     @admin.display(description='معتبر تا', ordering='valid_to')
     def get_valid_to_jalali(self, obj):
         return datetime2jalali(obj.valid_to).strftime('%a, %d %b %Y')
+
+
+@admin.register(models.Cart)
+class CartAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
+    list_display = ['user', 'coupon', 'coupon_discount', 'get_created_at_jalali', 'get_updated_at_jalali']
+
+    @admin.display(description='تاریخ ایجاد', ordering='created_at')
+    def get_created_at_jalali(self, obj):
+        return datetime2jalali(obj.created_at).strftime('%a, %d %b %Y')
+
+    @admin.display(description='تاریخ به‌روزرسانی', ordering='updated_at')
+    def get_updated_at_jalali(self, obj):
+        return datetime2jalali(obj.updated_at).strftime('%a, %d %b %Y')
+

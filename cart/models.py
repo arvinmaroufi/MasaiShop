@@ -40,3 +40,27 @@ class Coupon(models.Model):
             return False
         return True
 
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts', verbose_name='کاربر')
+    coupon = models.ForeignKey(Coupon, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کوپن تخفیف')
+    coupon_discount = models.IntegerField(default=0, verbose_name='مقدار تخفیف اعمال شده')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ به‌روزرسانی')
+
+    class Meta:
+        verbose_name = 'سبد خرید'
+        verbose_name_plural = 'سبدهای خرید'
+
+    def __str__(self):
+        return f"سبد خرید {self.user.username}"
+
+    @property
+    def total_price(self):
+        return sum(item.total_price for item in self.items.all())
+
+    @property
+    def final_price(self):
+        return self.total_price - self.coupon_discount
+
+
