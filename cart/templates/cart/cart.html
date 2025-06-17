@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+{% block title %}سبد خرید{% endblock %}
+{% load static %}
+{% load custom_filters %}
+{% load jalali_tags %}
+
+{% block content %}
+    <style>
+        .color_select {
+            padding: 8px 10px;
+            font-size: 13px;
+            font-family: vazir-fd-wl;
+            border-radius: 100px;
+            border: 1px solid #AADCDF;
+            background-color: #EAF6F7;
+            color: #474747;
+            outline: none;
+            width: 100px;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+        }
+
+        .color_select:hover {
+            box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.17);
+        }
+
+        .color_select option {
+            background-color: #fff;
+            color: #474747;
+        }
+
+        @media (max-width: 768px) {
+            .color_select {
+                width: 80px;
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .color_select {
+                width: 60px;
+                font-size: 11px;
+                padding: 5px 6px;
+            }
+        }
+
+        .coupon-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .coupon-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .coupon-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .coupon-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+    </style>
+    <main class="cart-page default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <ul class="order-steps">
+                        <li>
+                            <a href="{% url 'cart:cart' %}" class="active">
+                                <span>سبدخرید</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" {% if cart.items.count == 0 %}class="disabled"{% endif %}>
+                                <span>روش پرداخت</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="disabled">
+                                <span>اتمام خرید و ارسال</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="cart_content col-xl-12 col-lg-12 col-md-12">
+                    <header class="card-header">
+                        <h3 class="card-title"><span>سبد خرید شما</span></h3>
+                    </header>
+                    <div class="table-responsive default">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">محصول</th>
+                                <th scope="col">سبد خرید شما</th>
+                                <th scope="col">قیمت واحد</th>
+                                <th scope="col">رنگ</th>
+                                <th scope="col">تعداد</th>
+                                <th scope="col">قیمت نهایی</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in cart_items %}
+                                <tr class="cart_item">
+                                    <td>
+                                        {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}"
+                                                 alt="{{ item.product.title|truncatewords:5 }}">
+                                        {% else %}
+                                            <img src="{% static 'img/product_image_not_found.jpg' %}"
+                                                 alt="{{ item.product.title|truncatewords:5 }}">
+                                        {% endif %}
+                                        <i class="fa fa-times remove-item" aria-hidden="true"
+                                           data-item-id="{{ item.id }}"></i>
+                                    </td>
+                                    <td>
+                                        <h3 class="cart_title">
+                                            <a href="{% url 'product:product_detail' item.product.pid item.product.slug %}">
+                                                {{ item.product.title|truncatewords:5 }}
+                                            </a>
+                                        </h3>
+                                        <div class="cart_content">
+                                            {% if item.color %}
+                                                <div><span>رنگ </span><span
+                                                        class="item_property">{{ item.color.title }}</span></div>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cart_price">
+                                            {% if item.product.old_price %}
+                                                <del>
+                                                    <span>{{ item.product.old_price|format_price }}<span>تومان</span></span>
+                                                </del>
+                                            {% endif %}
+                                            <ins><span>{{ item.product.price|format_price }}<span>تومان</span></span>
+                                            </ins>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if item.product.color.all %}
+                                            <form method="post" action="{% url 'cart:cart' %}" class="color-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                <select class="color_select input_all" data-item-id="{{ item.id }}"
+                                                        onchange="updateCartItemColor('{{ item.id }}', this.value)">
+                                                    {% for color in item.product.color.all %}
+                                                        <option value="{{ color.id }}"
+                                                                {% if item.color and item.color.id == color.id %}selected{% endif %}>{{ color.title }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </form>
+                                        {% else %}
+                                            <span>ندارد</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <input type="number" class="tedad" value="{{ item.quantity }}" min="1"
+                                               max="{{ item.product.stock_count }}" data-item-id="{{ item.id }}"/>
+                                    </td>
+                                    <td class="price_alltd"
+                                        id="item-total-{{ item.id }}">{{ item.total_price|format_price }}
+                                        <span>تومان</span></td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">سبد خرید شما خالی است</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="cart-page-content col-xl-12 col-lg-12 col-md-12">
+                    <div class="row cart_details">
+                        <div class="cart-page-content col-xl-8 col-lg-7 col-md-7 ">
+                            <form method="post" action="{% url 'cart:apply_coupon' %}">
+                                {% csrf_token %}
+                                <input type="text" name="coupon_code" placeholder="کد تخفیف"
+                                       class="input_second input_all width-200">
+                                <button type="submit" class="btn btn-main-masai"> اعمال</button>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="coupon-{{ message.tags }} coupon-message">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if cart.coupon and cart.items.count > 0 %}
+                                    <div class="coupon-success coupon-message">
+                                        کد تخفیف {{ cart.coupon.code }} با موفقیت اعمال شد
+                                        ({{ cart.coupon_discount|format_price }} تومان تخفیف)
+                                    </div>
+                                {% endif %}
+                            </form>
+                            <div class="text_details">
+                                <p>
+                                    ارسال رایگان برای سفارش‌های بالای 10 میلیون و 500 هزار تومان
+                                </p>
+                                <p>
+                                    افزودن کالا به سبد خرید به معنی رزرو آن نیست با توجه به محدودیت موجودی سبد خود را
+                                    ثبت و خرید را تکمیل کنید.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="cart-page-aside col-xl-4 col-lg-5 col-md-5 divider_details">
+                            <table class="table table_details">
+                                <tbody>
+                                <tr>
+                                    <td>قیمت کل سفارش:</td>
+                                    <td id="total-price">{{ total_price|format_price }} <span>تومان</span></td>
+                                </tr>
+                                <tr>
+                                    <td>تخفیف:</td>
+                                    <td id="coupon-discount">
+                                        {% if cart.coupon and cart.items.count > 0 %}
+                                            {{ cart.coupon_discount|format_price }} <span>تومان</span>
+                                        {% else %}
+                                            0 <span>تومان</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>بسته‌بندی و ارسال:</td>
+                                    {% if shipping_cost %}
+                                        <td id="shipping-cost">{{ shipping_cost|format_price }} <span>تومان</span></td>
+                                    {% else %}
+                                        <td id="shipping-cost">رایگان</td>
+                                    {% endif %}
+                                </tr>
+                                <tr class="all">
+                                    <td>قیمت قابل پرداخت:</td>
+                                    {% if cart_items %}
+                                        <td id="final-price">{{ final_price|format_price }} <span>تومان</span></td>
+                                    {% else %}
+                                        <td id="final-price">0 <span>تومان</span></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <a href="
+                                                {% if cart.items.count > 0 %}{% url 'cart:shopping_payment' %}{% else %}#{% endif %}"
+                                           class="btn big_btn btn-main-masai {% if cart.items.count == 0 %}disabled{% endif %}">
+                                            گام بعدی
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function () {
+                    const itemId = this.getAttribute('data-item-id');
+                    removeCartItem(itemId);
+                });
+            });
+
+            document.querySelectorAll('.tedad').forEach(input => {
+                input.addEventListener('change', function () {
+                    const itemId = this.getAttribute('data-item-id');
+                    const newQuantity = this.value;
+                    updateCartItem(itemId, newQuantity);
+                });
+            });
+
+            document.querySelectorAll('.color_select').forEach(select => {
+                select.addEventListener('change', function () {
+                    const itemId = this.getAttribute('data-item-id');
+                    const colorId = this.value;
+                    updateCartItemColor(itemId, colorId);
+                });
+            });
+
+            function removeCartItem(itemId) {
+                fetch(`/cart/remove/${itemId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    });
+            }
+
+            function updateCartItem(itemId, quantity) {
+                fetch(`/cart/update/${itemId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        quantity: quantity
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById(`item-total-${itemId}`).innerHTML = `${data.item_price.toLocaleString('fa-IR')} <span>تومان</span>`;
+                            document.getElementById('total-price').innerHTML = `${data.total_price.toLocaleString('fa-IR')} <span>تومان</span>`;
+                            document.getElementById('shipping-cost').innerHTML = `${data.shipping_cost.toLocaleString('fa-IR')} <span>تومان</span>`;
+                            document.getElementById('final-price').innerHTML = `${data.final_price.toLocaleString('fa-IR')} <span>تومان</span>`;
+                        } else {
+                            alert(data.message);
+                        }
+                    });
+            }
+
+            function updateCartItemColor(itemId, colorId) {
+                fetch(`/cart/update/${itemId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        color_id: colorId
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message || 'خطا در تغییر رنگ محصول');
+                        }
+                    });
+            }
+
+            setTimeout(function () {
+                const messages = document.querySelectorAll('.coupon-message');
+                messages.forEach(message => {
+                    message.style.display = 'none';
+                });
+            }, 5000);
+        });
+    </script>
+{% endblock %}
+
