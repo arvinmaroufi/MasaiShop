@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.core.validators import RegexValidator
 
 
 class Profile(models.Model):
@@ -9,8 +10,8 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='نام خانوادگی')
     email = models.EmailField(max_length=100, null=True, blank=True, verbose_name='ایمیل')
     about_me = models.CharField(max_length=250, null=True, blank=True, verbose_name='درباره من')
-    phone = models.CharField(max_length=14, null=True, blank=True, verbose_name='شماره تلفن')
-    postal_code = models.CharField(max_length=10, null=True, blank=True, verbose_name='کد پستی')
+    phone = models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(regex='^09\d{9}$', message='شماره تلفن باید با 09 شروع شده و 11 رقم باشد')], verbose_name='شماره تلفن')
+    card_number = models.CharField(max_length=16, validators=[RegexValidator(regex=r'^\d{16}$', message='شماره کارت باید 16 رقم باشد', code='invalid_card_number')], null=True, blank=True, verbose_name='شماره کارت')
     image = models.ImageField(upload_to='profile/', null=True, blank=True, verbose_name='تصویر پروفایل')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
 

@@ -6,7 +6,7 @@ from jalali_date.admin import ModelAdminJalaliMixin
 
 @admin.register(models.Profile)
 class ProfileAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
-    list_display = ['user', 'first_name', 'last_name', 'email', 'phone', 'postal_code', 'get_created_at_jalali']
+    list_display = ['user', 'first_name', 'last_name', 'email', 'phone', 'card_number', 'get_created_at_jalali']
     search_fields = ['user']
 
     @admin.display(description='تاریخ ایجاد', ordering='created_at')
