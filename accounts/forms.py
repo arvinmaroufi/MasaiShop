@@ -8,23 +8,23 @@ from django.core.validators import EmailValidator
 class UserRegistrationForm(forms.ModelForm):
     first_name = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام'})
+        widget=forms.TextInput(attrs={'class': 'input_second input_all', 'placeholder': 'نام'})
     )
     last_name = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام خانوادگی'})
+        widget=forms.TextInput(attrs={'class': 'input_second input_all', 'placeholder': 'نام خانوادگی'})
     )
     username = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام کاربری'})
+        widget=forms.TextInput(attrs={'class': 'input_second input_all', 'placeholder': 'نام کاربری'})
     )
     email = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ایمیل'}),
+        widget=forms.TextInput(attrs={'class': 'input_second input_all', 'placeholder': 'ایمیل'}),
         validators=[EmailValidator(message="لطفا یک ایمیل معتبر وارد کنید.")]
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'رمز عبور'})
+        widget=forms.PasswordInput(attrs={'class': 'input_second input_all', 'placeholder': 'رمز عبور'})
     )
 
     class Meta:
@@ -59,10 +59,10 @@ class UserRegistrationForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام کاربری'}),
+        widget=forms.TextInput(attrs={'class': 'input_second input_all', 'placeholder': 'نام کاربری'}),
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'رمز عبور'})
+        widget=forms.PasswordInput(attrs={'class': 'input_second input_all', 'placeholder': 'رمز عبور'})
     )
 
     def clean(self):
@@ -78,13 +78,13 @@ class LoginForm(forms.Form):
 
 class ChangePasswordForm(forms.Form):
     old_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'رمز عبور فعلی'})
+        widget=forms.PasswordInput(attrs={'class': 'input_second input_all', 'placeholder': 'رمز عبور فعلی'})
     )
     new_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'رمز عبور جدید'})
+        widget=forms.PasswordInput(attrs={'class': 'input_second input_all', 'placeholder': 'رمز عبور جدید'})
     )
     confirm_new_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'تکرار رمز عبور جدید'})
+        widget=forms.PasswordInput(attrs={'class': 'input_second input_all', 'placeholder': 'تکرار رمز عبور جدید'})
     )
 
     def clean_new_password(self):
