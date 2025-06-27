@@ -23,7 +23,7 @@ class Coupon(models.Model):
 
     class Meta:
         verbose_name = 'کوپن تخفیف'
-        verbose_name_plural = 'کوپن‌های تخفیف'
+        verbose_name_plural = 'کوپن ‌های تخفیف'
 
     def __str__(self):
         return self.code
@@ -42,7 +42,7 @@ class Coupon(models.Model):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts', verbose_name='کاربر')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart', verbose_name='کاربر')
     coupon = models.ForeignKey(Coupon, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کوپن تخفیف')
     coupon_discount = models.IntegerField(default=0, verbose_name='مقدار تخفیف اعمال شده')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
@@ -50,7 +50,7 @@ class Cart(models.Model):
 
     class Meta:
         verbose_name = 'سبد خرید'
-        verbose_name_plural = 'سبدهای خرید'
+        verbose_name_plural = 'سبد های خرید'
 
     def __str__(self):
         return f"سبد خرید {self.user.username}"
@@ -63,6 +63,12 @@ class Cart(models.Model):
     def final_price(self):
         return self.total_price - self.coupon_discount
 
+    def clear(self):
+        self.items.all().delete()
+        self.coupon = None
+        self.coupon_discount = 0
+        self.save()
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items', verbose_name='سبد خرید')
@@ -73,7 +79,7 @@ class CartItem(models.Model):
 
     class Meta:
         verbose_name = 'آیتم سبد خرید'
-        verbose_name_plural = 'آیتم‌های سبد خرید'
+        verbose_name_plural = 'آیتم‌ های سبد خرید'
         unique_together = ['cart', 'product', 'color']
 
     def __str__(self):
