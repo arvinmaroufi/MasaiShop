@@ -234,6 +234,7 @@
                 </li>
 
                 <li class="list_style">
+                    <i class="fa fa-users icon-icon" aria-hidden="true"></i>
                     <a href="{% url 'core:about' %}" class="list__link">درباره ما</a>
                 </li>
             </ul>
@@ -261,7 +262,7 @@
                     </div>
                     <div class="service-item col-2 contact-box text-center">
                         <img src="{% static 'img/ico/png-1.png' %}" class="width-40"/>
-                        <span class="title-1 light-black">پرداخت در محل</span>
+                        <span class="title-1 light-black">پرداخت امن</span>
                     </div>
                     <div class="service-item col-2 contact-box text-center">
                         <img src="{% static 'img/ico/png-2.png' %}" class="width-40"/>
@@ -291,31 +292,25 @@
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="widget-menu widget card">
                             <div class="card-header">
-                                <h3 class="card-title">درباره ما</h3>
+                                <h3 class="card-title">درباره مَسای</h3>
                             </div>
                             <p class="about_footer">
-                                قالب مَسای یک پکیج کامل ایرانی با هدف بی نهایت قالب HTML و WordPress و به روز رسانی
-                                همیشگی است، که تمام ویژگی های لازم طراحی سایت را در نظر میگیرد
+                                فروشگاه مَسای با هدف ارائه بهترین محصولات و خدمات به شما عزیزان تأسیس شده است. در مَسای، ما به کیفیت و تنوع
+                                محصولات خود افتخار می‌کنیم و تلاش می‌کنیم تا تجربه خریدی راحت و لذت‌بخش را برای شما فراهم کنیم.
                             </p>
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="widget-menu widget card">
                             <div class="card-header">
-                                <h3 class="card-title">خدمات مشتریان</h3>
+                                <h3 class="card-title">لینک های مفید</h3>
                             </div>
                             <ul class="footer-menu">
                                 <li>
-                                    <a href="#">ارسال فوری</a>
+                                    <a href="{% url 'product:product_list' %}">محصولات</a>
                                 </li>
                                 <li>
-                                    <a href="#">پشتیبانی سریع</a>
-                                </li>
-                                <li>
-                                    <a href="#">بازگشت وجه</a>
-                                </li>
-                                <li>
-                                    <a href="#">بسته بندی کالا</a>
+                                    <a href="{% url 'blog:article_list' %}">وبلاگ</a>
                                 </li>
                             </ul>
                         </div>
@@ -323,16 +318,9 @@
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="widget-menu widget card">
                             <div class="card-header">
-                                <h3 class="card-title">با مَسای شاپ</h3>
+                                <h3 class="card-title">آشنایی با مَسای</h3>
                             </div>
                             <ul class="footer-menu">
-
-                                <li>
-                                    <a href="#">تامین کالا همکار</a>
-                                </li>
-                                <li>
-                                    <a href="#">تخفیف سازمانی</a>
-                                </li>
                                 <li>
                                     <a href="{% url 'core:contact' %}">تماس با ما</a>
                                 </li>
@@ -348,8 +336,8 @@
                                 <h3 class="card-title">مجوزات</h3>
                             </div>
                             <div class="License_img">
-                                <a href="#" target="_blank"><img src="{% static 'img/License_2.png' %}" alt=""></a>
-                                <a href="#" target="_blank"><img src="{% static 'img/License_1.png' %}" alt=""></a>
+                                <a href="{% url "core:home" %}"><img src="{% static 'img/samandehi.png' %}" alt="samandehi license"></a>
+                                <a href="{% url "core:home" %}"><img src="{% static 'img/enamad.png' %}" alt="enamad license"></a>
                             </div>
                         </div>
 
@@ -361,11 +349,7 @@
 
         <div class="copyright">
             <div class="container">
-                <p>
-                    این قالب به وسیله گروه برنامه نویسی <a
-                        href="https://www.rtl-theme.com/author/rashid_mirazimi/products/" target="_blank"> گرزک </a>
-                    پشتیبانی میشود.
-                </p>
+                <p>{{ site_settings.copy_right }}</p>
             </div>
         </div>
     </footer>
