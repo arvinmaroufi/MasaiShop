@@ -79,15 +79,13 @@
                                             <div class="col-xl-4 col-lg-4 col-md-6 col-12 list_search_p ">
                                                 <div class="product-box">
                                                     <div class="product-seller-details product-seller-details-item-grid">
-                                                    <span class="search_prod_icon">
-                                                        <i class="fa fa-search search_icon_search"
-                                                           aria-hidden="true"></i>
-                                                        <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                    </span>
+                                                        <span class="search_prod_icon">
+                                                            <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
+                                                            <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
+                                                        </span>
                                                         <span class="search_prod_btn">
-                                                        <i class="fa fa fa-cart-arrow-down search_icon_cart"
-                                                           aria-hidden="true"></i>
-                                                    </span>
+                                                            <i class="fa fa fa-cart-arrow-down search_icon_cart" aria-hidden="true" data-product-id="{{ product.id }}" data-color-id="{% if product.color.all %}{{ product.color.first.id }}{% else %}null{% endif %}" onclick="addToCart(this)"></i>
+                                                        </span>
                                                     </div>
                                                     <a class="product-box-img"
                                                        href="{% url 'product:product_detail' product.pid product.slug %}">
@@ -185,6 +183,60 @@
         maxRange.addEventListener('input', updatePriceLabels);
 
         updatePriceLabels();
+
+
+        function addToCart(element) {
+            {% if not request.user.is_authenticated %}
+                Swal.fire({
+                    title: 'ورود به سیستم',
+                    text: 'برای افزودن محصول به سبد خرید، ابتدا باید وارد حساب کاربری خود شوید.',
+                    icon: 'warning',
+                    confirmButtonText: 'ورود',
+                    confirmButtonColor: '#46A9AE',
+                    showCancelButton: true,
+                    cancelButtonText: 'انصراف',
+                    cancelButtonColor: '#e74c3c'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{% url 'account:login' %}?next={{ request.path }}";
+                    }
+                });
+                return;
+            {% endif %}
+
+            const productId = element.getAttribute('data-product-id');
+            const colorId = element.getAttribute('data-color-id') === 'null' ? null : element.getAttribute('data-color-id');
+
+            fetch(`/cart/add/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    color_id: colorId,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        text: 'محصول با موفقیت به سبد خرید اضافه شد',
+                        icon: 'success',
+                        confirmButtonText: 'تایید',
+                        confirmButtonColor: '#46A9AE'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'خطا',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonColor: '#e74c3c'
+                    });
+                }
+            });
+        }
     </script>
 
 {% endblock %}
