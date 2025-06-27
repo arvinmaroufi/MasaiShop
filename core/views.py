@@ -18,7 +18,7 @@ def home(request):
     latest_products = Product.objects.filter(status='published', old_price=None).order_by('-created_at')[:4]
     latest_articles = Article.objects.filter(status='published').order_by('-created_at')[:5]
     discounted_products = Product.objects.filter(
-        status='published',
+        status='published', stock_count__gt=0,
         old_price__isnull=False,
         old_price__gt=models.F('price')
     ).annotate(
