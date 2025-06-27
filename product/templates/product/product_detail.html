@@ -399,8 +399,10 @@
                                                                 <li>
                                                                     <div class="comment-body">
                                                                         <div class="comment-author">
-                                                                            <img alt="{{ comment.author.username }}" src="
-                                                                                    {% if comment.author.profile.image %}{{ comment.author.profile.image.url }}{% else %}{% static 'img/profile/1.png' %}{% endif %}"
+                                                                            <img alt="{{ comment.author.username }}"
+                                                                                 src="
+
+                                                                                         {% if comment.author.profile.image %}{{ comment.author.profile.image.url }}{% else %}{% static 'img/profile/1.png' %}{% endif %}"
                                                                                  class="avatar">
                                                                             <div class="text-h5">
                                                                                 {% if comment.author.profile.first_name and comment.author.profile.last_name %}
@@ -537,7 +539,25 @@
         });
 
 
-        document.getElementById('add-to-cart').addEventListener('click', function () {
+        document.getElementById('add-to-cart')?.addEventListener('click', function () {
+            {% if not request.user.is_authenticated %}
+                Swal.fire({
+                    title: 'ورود به سیستم',
+                    text: 'برای افزودن محصول به سبد خرید، ابتدا باید وارد حساب کاربری خود شوید.',
+                    icon: 'warning',
+                    confirmButtonText: 'ورود',
+                    confirmButtonColor: '#46A9AE',
+                    showCancelButton: true,
+                    cancelButtonText: 'انصراف',
+                    cancelButtonColor: '#e74c3c'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{% url 'account:login' %}?next={{ request.path }}";
+                    }
+                });
+                return;
+            {% endif %}
+
             const productId = this.getAttribute('data-product-id');
             const colorSelect = document.getElementById('product-color');
             const colorId = colorSelect ? colorSelect.value : null;
@@ -563,6 +583,7 @@
                             confirmButtonText: 'تایید',
                             confirmButtonColor: '#46A9AE'
                         });
+                        // به‌روزرسانی تعداد آیتم‌های سبد خرید در نوار بالایی
                         document.getElementById('cart-count').textContent = data.cart_count;
                     } else {
                         Swal.fire({
