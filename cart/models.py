@@ -103,7 +103,8 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name='کاربر')
     order_number = ShortUUIDField(length=10, max_length=10, alphabet="1234567890", unique=True, verbose_name="شماره سفارش")
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, verbose_name='آدرس')
-    cart = models.OneToOneField(Cart, on_delete=models.SET_NULL, null=True, verbose_name='سبد خرید')
+    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='سبد خرید')
+    items_data = models.JSONField(null=True, blank=True, verbose_name='اطلاعات محصولات')
     total_price = models.IntegerField(verbose_name='مبلغ کل')
     coupon_discount = models.IntegerField(default=0, verbose_name='تخفیف کوپن')
     shipping_cost = models.IntegerField(default=0, verbose_name='هزینه ارسال')
@@ -120,3 +121,16 @@ class Order(models.Model):
     def __str__(self):
         return f"سفارش {self.order_number} - {self.user.username}"
 
+    def save(self, *args, **kwargs):
+        if self.cart and not self.items_data:
+            self.items_data = {
+                'items': [{
+                    'product': item.product.id,
+                    'title': item.product.title,
+                    'quantity': item.quantity,
+                    'price': item.product.price
+                } for item in self.cart.items.all()],
+                'coupon': self.cart.coupon.code if self.cart.coupon else None,
+                'discount': self.cart.coupon_discount
+            }
+        super().save(*args, **kwargs)
