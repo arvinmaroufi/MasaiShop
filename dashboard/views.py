@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from accounts.models import Profile
 from cart.models import Order, CartItem, Cart
@@ -228,3 +228,21 @@ def wishlist_products(request):
         'pages_to_show': pages_to_show,
     }
     return render(request, 'dashboard/wishlist_products.html', context)
+
+
+@login_required
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+
+    if created:
+        message = "محصول به لیست علاقه ‌مندی‌ ها اضافه شد."
+        status = 'success'
+    else:
+        message = "این محصول قبلاً در لیست علاقه‌ مندی‌ های شما وجود دارد."
+        status = 'info'
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'status': status, 'message': message})
+    return redirect('product:product_detail', pk=product_id)
+
