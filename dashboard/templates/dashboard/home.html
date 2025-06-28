@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% block title %}داشبورد{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+{% load custom_filters %}
+
+{% block content %}
+    <style>
+        .badge-paid {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+        }
+
+        .badge-shipped {
+            background: linear-gradient(135deg, #2196F3, #0D47A1);
+            color: white;
+        }
+
+        .badge-delivered {
+            background: linear-gradient(135deg, #9C27B0, #6A1B9A);
+            color: white;
+        }
+
+        .badge-pending {
+            background: linear-gradient(135deg, #FF9800, #E65100);
+            color: white;
+        }
+
+        .badge-processing {
+            background: linear-gradient(135deg, #00BCD4, #00838F);
+            color: white;
+        }
+
+        .badge-cancelled {
+            background: linear-gradient(135deg, #F44336, #C62828);
+            color: white;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .status-badges .badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+
+    <main class="order-delivered default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <div class="col-lg-12 col-md-12 order-2">
+                        <!-- User account statistics -->
+                        <div class="widget widget-product">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>آمار حساب کاربری</span></h3>
+                            </header>
+                            <div class="card-body">
+                                <div class="row text-center">
+
+                                    <!-- Current Cart Items -->
+                                    <div class="col-md-4 col-sm-6 col-6 space-bottom-15">
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="font-20 color-font-2d66ce">
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </div>
+                                            <div class="font-16">سفارشات در سبد</div>
+                                            <div class="font-18 font-weight-bold">{{ current_cart_items }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delivered Orders -->
+                                    <div class="col-md-4 col-sm-6 col-6 space-bottom-15">
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="font-20 color-font-2dce93">
+                                                <i class="fa fa-check-circle"></i>
+                                            </div>
+                                            <div class="font-16">تحویل داده شده</div>
+                                            <div class="font-18 font-weight-bold">{{ delivered_orders }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cancelled Orders -->
+                                    <div class="col-md-4 col-sm-6 col-6 space-bottom-15">
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="font-20 color-font-ce2d9b">
+                                                <i class="fa fa-undo"></i>
+                                            </div>
+                                            <div class="font-16">لغو شده</div>
+                                            <div class="font-18 font-weight-bold">{{ cancelled_orders }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Comments Count -->
+                                    <div class="col-md-4 col-sm-6 col-6 space-bottom-15">
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="font-20" style="color: #ff9800">
+                                                <i class="fa fa-comment"></i>
+                                            </div>
+                                            <div class="font-16">نظرات ثبت شده</div>
+                                            <div class="font-18 font-weight-bold">{{ comments_count }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Wishlist Products Count -->
+                                    <div class="col-md-4 col-sm-6 col-6 space-bottom-15">
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="font-20" style="color: #e91e63;">
+                                                <i class="fa fa-heart"></i>
+                                            </div>
+                                            <div class="font-16">محصولات مورد علاقه</div>
+                                            <div class="font-18 font-weight-bold">6</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- User Notifications Count -->
+                                    <div class="col-md-4 col-sm-6 col-6 space-bottom-15">
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="font-20" style="color: #d14545;">
+                                                <i class="fa fa-bell"></i>
+                                            </div>
+                                            <div class="font-16">اعلان ها</div>
+                                            <div class="font-18 font-weight-bold">5</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Orders Start -->
+                        <div class="widget widget-product">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>سفارشات اخیر شما</span></h3>
+                            </header>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>شماره سفارش</th>
+                                            <th>تاریخ</th>
+                                            <th>مبلغ</th>
+                                            <th>وضعیت</th>
+                                            <th>عملیات</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if recent_orders %}
+                                            {% for order in recent_orders %}
+                                                <tr>
+                                                    <td>{{ order.order_number }}</td>
+                                                    <td>{{ order.created_at|to_jalali:'%d %b %Y' }}</td>
+                                                    <td>{{ order.final_price|format_price }} تومان</td>
+                                                    <td>
+                                                        {% if order.status == 'paid' %}
+                                                            <span class="badge badge-paid"><i
+                                                                    class="fa fa-check-circle"></i> {{ order.get_status_display }}</span>
+                                                        {% elif order.status == 'shipped' %}
+                                                            <span class="badge badge-shipped"><i
+                                                                    class="fa fa-truck"></i> {{ order.get_status_display }}</span>
+                                                        {% elif order.status == 'delivered' %}
+                                                            <span class="badge badge-delivered"><i
+                                                                    class="fa fa-check-square"></i> {{ order.get_status_display }}</span>
+                                                        {% elif order.status == 'pending' %}
+                                                            <span class="badge badge-pending"><i
+                                                                    class="fa fa-clock"></i> {{ order.get_status_display }}</span>
+                                                        {% elif order.status == 'processing' %}
+                                                            <span class="badge badge-processing"><i
+                                                                    class="fa fa-cog fa-spin"></i> {{ order.get_status_display }}</span>
+                                                        {% elif order.status == 'cancelled' %}
+                                                            <span class="badge badge-cancelled"><i
+                                                                    class="fa fa-times-circle"></i> {{ order.get_status_display }}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td><a href="#order_detail"
+                                                           class="btn btn-sm btn-main-masai">مشاهده</a></td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center">سفارشی یافت نشد</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Recent Orders End -->
+
+                        <!-- Popular Products Start -->
+                        <div class="widget widget-product">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>پیشنهادهای ویژه برای شما</span></h3>
+                            </header>
+                            <div class="product-carousel owl-carousel owl-theme owl-rtl owl-loaded owl-drag">
+                                {% if popular_products %}
+                                    {% for product in popular_products %}
+                                        <div class="item">
+                                            <a href="{% url 'product:product_detail' product.pid product.slug %}">
+                                                {% if product.image %}
+                                                    <img src="{{ product.image.url }}" class="img-fluid"
+                                                         alt="{{ product.title|truncatewords:4 }}">
+                                                {% else %}
+                                                    <img src="{% static 'img/product_image_not_found.jpg' %}"
+                                                         class="img-fluid" alt="{{ product.title|truncatewords:4 }}">
+                                                {% endif %}
+                                            </a>
+                                            <h2 class="post-title">
+                                                <a href="{% url 'product:product_detail' product.pid product.slug %}">{{ product.title|truncatewords:4 }}</a>
+                                            </h2>
+                                            <div class="price">
+                                                {% if product.old_price %}
+                                                    <del>{{ product.old_price|format_price }} تومان</del>
+                                                {% endif %}
+                                                <ins>{{ product.price|format_price }} تومان</ins>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    محصولی وجود ندارد!
+                                {% endif %}
+
+                            </div>
+                        </div>
+                        <!-- Popular Products End -->
+                    </div>
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+    <!-- main -->
+{% endblock content %}
