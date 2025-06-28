@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from product.models import Product
 
 
 class Address(models.Model):
@@ -29,3 +30,17 @@ class Address(models.Model):
         if self.is_default:
             self.user.addresses.exclude(pk=self.pk).update(is_default=False)
         super().save(*args, **kwargs)
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlists', verbose_name='کاربر')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlists', verbose_name='محصول مربوطه')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+
+    class Meta:
+        verbose_name = 'لیست علاقه ‌مندی'
+        verbose_name_plural = 'لیست‌ های علاقه ‌مندی'
+        unique_together = ('user', 'product')
+
+    def __str__(self):
+        return self.user.username
