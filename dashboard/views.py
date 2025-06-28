@@ -90,3 +90,24 @@ def order_detail(request, order_number):
         'items': items,
     }
     return render(request, 'dashboard/order_detail.html', context)
+
+
+@login_required
+def orders_delivered(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    orders = Order.objects.filter(user=user, status='delivered').order_by('-created_at')
+
+    # Pagination
+    page_number = request.GET.get('page')
+    paginator = Paginator(orders, 6)
+    object_list = paginator.get_page(page_number)
+    pages_to_show = get_pages_to_show(object_list.number, paginator.num_pages)
+
+    context = {
+        'profile': profile,
+
+        'orders': object_list,
+        'pages_to_show': pages_to_show,
+    }
+    return render(request, 'dashboard/orders_delivered.html', context)
