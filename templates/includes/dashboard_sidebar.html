@@ -54,7 +54,7 @@
                     <i class="fa fa-shopping-cart colormain" aria-hidden="true"></i> سفارشات در سبد
                 </a>
 
-                <a href="#orders_cancelled" class="dropdown-item">
+                <a href="{% url "dashboard:orders_cancelled" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders_cancelled' %}active-menu{% endif %}">
                     <i class="fa fa-times colormain" aria-hidden="true"></i>
                     سفارشات لغو شده
                 </a>
@@ -127,7 +127,7 @@
             </li>
 
             <li>
-                <a href="#orders_cancelled" class="dropdown-item">
+                <a href="{% url "dashboard:orders_cancelled" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders_cancelled' %}active{% endif %}">
                     <i class="fa fa-times colormain" aria-hidden="true"></i>
                     سفارشات لغو شده
                 </a>
