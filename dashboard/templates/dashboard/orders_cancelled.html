@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}سفارشات لغو شده{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+{% load custom_filters %}
+
+{% block content %}
+    <style>
+        .badge-cancelled {
+            background: linear-gradient(135deg, #F44336, #C62828);
+            color: white;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+    <main class="order-delivered default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <!-- Orders Start -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>سفارشات لغو شده</span></h3>
+                            </header>
+                            <div class="content-section default">
+                                <div class="row">
+                                    {% if orders %}
+                                        {% for order in orders %}
+                                            <div class="col-md-12 col-sm-12 order_delivered_sec">
+                                                <div class="profile-recent-fav-row">
+                                                    <div class="col-12">
+                                                        <h4 class="profile-recent-fav-name">
+                                                            <span class="badge badge-cancelled">
+                                                                <i class="fa fa-times-circle" style='color: white;' aria-hidden="true"></i> {{ order.get_status_display }}
+                                                            </span>
+                                                        </h4>
+                                                        <ul>
+                                                            <li>
+                                                                {{ order.created_at|to_jalali:'%d %b %Y' }}
+                                                            </li>
+                                                            <li>
+                                                                کد سفارش: <b>{{ order.order_number }}</b>
+                                                            </li>
+                                                            <li>
+                                                                تخفیف: <b>{{ order.coupon_discount|format_price }} تومان</b>
+
+                                                            </li>
+                                                            <li>
+                                                                مجموع سبد: <b>{{ order.final_price|format_price }} تومان</b>
+
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-12 text-left">
+                                                        <a href="{% url 'dashboard:order_detail' order.order_number %}" class="btn btn-main-masai">مشاهده فاکتور</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="">
+                                            <p>سفارشی یافت نشد</p>
+                                        </div>
+                                    {% endif %}
+
+
+                                </div>
+                                <!-- Pagination Start -->
+                                {% if orders.has_other_pages %}
+                                    <div class="pagination">
+                                        {% if orders.has_previous %}
+                                            <a href="?page={{ orders.previous_page_number }}" class="page-arrow prev"><i
+                                                    class="fa fa-angle-right"></i></a>
+                                        {% endif %}
+                                        {% for page in pages_to_show %}
+                                            {% if page == '...' %}
+                                                <span class="page-number">...</span>
+                                            {% elif orders.number == page %}
+                                                <a href="?page={{ page }}" class="page-number active">{{ page }}</a>
+                                            {% else %}
+                                                <a href="?page={{ page }}" class="page-number">{{ page }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if orders.has_next %}
+                                            <a href="?page={{ orders.next_page_number }}" class="page-arrow next"><i
+                                                    class="fa fa-angle-left"></i></a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <!-- Pagination End -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Orders End -->
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+{% endblock %}
