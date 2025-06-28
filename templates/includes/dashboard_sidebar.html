@@ -50,7 +50,7 @@
                     سفارشات تحویل داده شده
                 </a>
 
-                <a href="#cart_summary" class="dropdown-item">
+                <a href="{% url "dashboard:cart_summary" %}" class="dropdown-item {% if request.resolver_match.url_name == 'cart_summary' %}active-menu{% endif %}">
                     <i class="fa fa-shopping-cart colormain" aria-hidden="true"></i> سفارشات در سبد
                 </a>
 
@@ -121,7 +121,7 @@
             </li>
 
             <li>
-                <a href="#cart_summary" class="dropdown-item">
+                <a href="{% url "dashboard:cart_summary" %}" class="dropdown-item {% if request.resolver_match.url_name == 'cart_summary' %}active{% endif %}">
                     <i class="fa fa-shopping-cart colormain" aria-hidden="true"></i> سفارشات در سبد
                 </a>
             </li>
