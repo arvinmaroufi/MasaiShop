@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}محصولات مورد علاقه{% endblock title %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+    <main class="order-delivered default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <!-- Wishlist Items Start -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>محصولات مورد علاقه</span></h3>
+                            </header>
+                            <div class="content-section default">
+                                <div class="row">
+                                    {% if wishlist_items %}
+                                        {% for item in wishlist_items %}
+                                            <div class="col-md-6 col-sm-12 order_delivered_sec">
+                                                <div class="profile-recent-fav-row">
+                                                    <div class="col-12 text--center">
+                                                        {% if item.product.image %}
+                                                            <img src="{{ item.product.image.url }}" class="max_w200"
+                                                                 alt='{{ item.product.title|truncatewords:7 }}'>
+                                                        {% else %}
+                                                            <img src="{% static 'img/product_image_not_found.jpg' %}"
+                                                                 class="max_w200"
+                                                                 alt='{{ item.product.title|truncatewords:7 }}'>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <a href="{% url 'product:product_detail' item.product.pid item.product.slug %}">
+                                                            <h4 class="profile-recent-fav-name_sec">
+                                                                {{ item.product.title|truncatewords:7 }}
+                                                            </h4>
+                                                        </a>
+
+                                                        <h4 class="profile-recent-Club text-center">
+                                                            <b>{{ item.product.price|format_price }} تومان</b>
+                                                        </h4>
+                                                    </div>
+                                                    <div class="col-6 text-right">
+                                                        <button class="btn btn-second-masai remove-wishlist-item"
+                                                                data-product-id="{{ item.product.id }}">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i> حذف از لیست
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="">
+                                            <p>محصول مورد علاقه ای یافت نشد</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <!-- Pagination Start -->
+                                {% if wishlist_items.has_other_pages %}
+                                    <div class="pagination">
+                                        {% if wishlist_items.has_previous %}
+                                            <a href="?page={{ wishlist_items.previous_page_number }}" class="page-arrow prev"><i class="fa fa-angle-right"></i></a>
+                                        {% endif %}
+                                        {% for page in pages_to_show %}
+                                            {% if page == '...' %}
+                                                <span class="page-number">...</span>
+                                            {% elif wishlist_items.number == page %}
+                                                <a href="?page={{ page }}" class="page-number active">{{ page }}</a>
+                                            {% else %}
+                                                <a href="?page={{ page }}" class="page-number">{{ page }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if wishlist_items.has_next %}
+                                            <a href="?page={{ wishlist_items.next_page_number }}" class="page-arrow next"><i class="fa fa-angle-left"></i></a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <!-- Pagination End -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Wishlist Items End -->
+                </div>
+                {% include "includes/dashboard_sidebar.html" %}
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.remove-wishlist-item').click(function (e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var button = $(this);
+
+                $.ajax({
+                    url: '/dashboard/wishlist/remove/' + productId + '/',
+                    method: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            button.closest('.order_delivered_sec').fadeOut(300, function () {
+                                $(this).remove();
+                                if ($('.order_delivered_sec').length === 0) {
+                                    $('.content-section .row').html('<div class=""><p>محصول مورد علاقه ‌ای یافت نشد</p></div>');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
