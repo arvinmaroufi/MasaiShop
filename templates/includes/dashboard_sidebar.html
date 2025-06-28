@@ -4,16 +4,24 @@
     <div class="profile-card-1">
         <!--image-->
         <div class="img">
-            <img src="{% static "img/default_profile_image.png" %}" alt='username'/>
+            {% if profile.image %}
+                <img src="{{ profile.image.url }}" alt='{{ profile.user.username }}' />
+            {% else %}
+                <img src="{% static "img/default_profile_image.png" %}" alt='{{ profile.user.username }}' />
+            {% endif %}
         </div>
 
         <!--text-->
         <div class="mid-section">
-            <div class="name">نام کاربری</div>
+            {% if profile.first_name and profile.last_name %}
+                <div class="name">{{ profile.first_name }} {{ profile.last_name }}</div>
+            {% else %}
+                <div class="name">{{ profile.user.username }}</div>
+            {% endif %}
             <div class="line"></div>
             <div class="stats">
                 <div class="stat">
-                    <div class="subtext">عضو از 1404/04/04</div>
+                    <div class="subtext">عضو از {{ request.user.date_joined|to_jalali:'%Y/%m/%d' }}</div>
                 </div>
             </div>
         </div>
@@ -28,7 +36,7 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right text-right">
 
-                <a href="#home" class="dropdown-item active-menu">
+                <a href="{% url "dashboard:home" %}" class="dropdown-item {% if request.resolver_match.url_name == 'home' %}active-menu{% endif %}">
                     <i class="fa fa-home colormain" aria-hidden="true"></i>
                     داشبورد
                 </a>
@@ -94,7 +102,7 @@
         <ul class="profile-menu-items">
 
             <li>
-                <a href="#home" class="dropdown-item active">
+                <a href="{% url "dashboard:home" %}" class="dropdown-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
                     <i class="fa fa-home colormain" aria-hidden="true"></i>
                     داشبورد
                 </a>
