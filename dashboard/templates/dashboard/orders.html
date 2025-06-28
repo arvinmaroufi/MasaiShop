@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}سفارشات{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+{% load custom_filters %}
+
+{% block content %}
+    <style>
+        .badge-paid {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+        }
+
+        .badge-shipped {
+            background: linear-gradient(135deg, #2196F3, #0D47A1);
+            color: white;
+        }
+
+        .badge-delivered {
+            background: linear-gradient(135deg, #9C27B0, #6A1B9A);
+            color: white;
+        }
+
+        .badge-pending {
+            background: linear-gradient(135deg, #FF9800, #E65100);
+            color: white;
+        }
+
+        .badge-processing {
+            background: linear-gradient(135deg, #00BCD4, #00838F);
+            color: white;
+        }
+
+        .badge-cancelled {
+            background: linear-gradient(135deg, #F44336, #C62828);
+            color: white;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+    <main class="order-delivered default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <!-- Orders Start -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>سفارشات</span></h3>
+                            </header>
+                            <div class="content-section default">
+                                <div class="row">
+                                    {% if orders %}
+                                        {% for order in orders %}
+                                            <div class="col-md-12 col-sm-12 order_delivered_sec">
+                                                <div class="profile-recent-fav-row">
+                                                    <div class="col-12">
+                                                        <h4 class="profile-recent-fav-name">
+                                                            {% if order.status == 'paid' %}
+                                                                <span class="badge badge-paid">
+                                                                    <i class="fa fa-check-circle" style='color: white;' aria-hidden="true"></i> {{ order.get_status_display }}
+                                                                </span>
+                                                            {% elif order.status == 'shipped' %}
+                                                                <span class="badge badge-shipped">
+                                                                    <i class="fa fa-truck" style='color: white;' aria-hidden="true"></i> {{ order.get_status_display }}
+                                                                </span>
+                                                            {% elif order.status == 'delivered' %}
+                                                                <span class="badge badge-delivered">
+                                                                    <i class="fa fa-check-square" style='color: white;' aria-hidden="true"></i> {{ order.get_status_display }}
+                                                                </span>
+                                                            {% elif order.status == 'pending' %}
+                                                                <span class="badge badge-pending">
+                                                                    <i class="fa fa-clock" style='color: white;' aria-hidden="true"></i> {{ order.get_status_display }}
+                                                                </span>
+                                                            {% elif order.status == 'processing' %}
+                                                                <span class="badge badge-processing">
+                                                                    <i class="fa fa-cog fa-spin" style='color: white;' aria-hidden="true"></i> {{ order.get_status_display }}
+                                                                </span>
+                                                            {% elif order.status == 'cancelled' %}
+                                                                <span class="badge badge-cancelled">
+                                                                    <i class="fa fa-times-circle" style='color: white;' aria-hidden="true"></i> {{ order.get_status_display }}
+                                                                </span>
+                                                            {% endif %}
+                                                        </h4>
+                                                        <ul>
+                                                            <li>
+                                                                {{ order.created_at|to_jalali:'%d %b %Y' }}
+                                                            </li>
+                                                            <li>
+                                                                <b>کد سفارش: </b>{{ order.order_number }}
+                                                            </li>
+                                                            <li>
+                                                                <b>تخفیف: </b>{{ order.coupon_discount|format_price }}
+                                                                تومان
+                                                            </li>
+                                                            <li>
+                                                                <b>مجموع سبد: </b>{{ order.final_price|format_price }}
+                                                                تومان
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-12 text-left">
+                                                        <a href="#order_detail"
+                                                           class="btn btn-main-masai">مشاهده فاکتور</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="">
+                                            <p>سفارشی یافت نشد</p>
+                                        </div>
+                                    {% endif %}
+
+
+                                </div>
+                                <!-- Pagination Start -->
+                                {% if orders.has_other_pages %}
+                                    <div class="pagination">
+                                        {% if orders.has_previous %}
+                                            <a href="?page={{ orders.previous_page_number }}" class="page-arrow prev"><i
+                                                    class="fa fa-angle-right"></i></a>
+                                        {% endif %}
+                                        {% for page in pages_to_show %}
+                                            {% if page == '...' %}
+                                                <span class="page-number">...</span>
+                                            {% elif orders.number == page %}
+                                                <a href="?page={{ page }}" class="page-number active">{{ page }}</a>
+                                            {% else %}
+                                                <a href="?page={{ page }}" class="page-number">{{ page }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if orders.has_next %}
+                                            <a href="?page={{ orders.next_page_number }}" class="page-arrow next"><i
+                                                    class="fa fa-angle-left"></i></a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <!-- Pagination End -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Orders End -->
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+{% endblock %}
