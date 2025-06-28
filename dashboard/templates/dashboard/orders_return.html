@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}لغو سفارش{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+{% load custom_filters %}
+
+{% block content %}
+    <main class="profile-user-page default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="profile-page col-xl-9 col-lg-8 col-md-12 order-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>لغو سفارش</span></h3>
+                            </header>
+                            <div class="content-section default">
+                                <form id="returnOrderForm" method="post">
+                                    {% csrf_token %}
+                                    <p>جهت لغو سفارش، ابتدا کد سفارش خود را وارد کرده و سپس دکمه بررسی سفارش را بزنید تا سفارشتان مورد بررسی قرار بگیرد.</p>
+                                    <p class="text-danger"><i class="fa fa-exclamation-circle"></i> توجه: فقط تا 48 ساعت پس از ثبت سفارش امکان لغو وجود دارد.</p>
+                                    <p class="text-danger"><i class="fa fa-exclamation-circle"></i> توجه: در صورت لغو سفارش، هزینه ارسال (50,000 تومان) از مبلغ بازگشتی کسر خواهد شد.</p>
+                                    <div class="row">
+                                        <div class="col-md-3 col-12"></div>
+                                        <div class="col-md-6 col-12 text--center">
+                                            <div>
+                                                <label class="ui-input">
+                                                    <input class="input_second input_all" type="text" name="order_number" placeholder="2569854710" maxlength="10" required>
+                                                </label>
+                                            </div>
+
+                                            <div>
+                                                <button type="submit" class="btn big_btn btn-main-masai">بررسی سفارش</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-12"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('returnOrderForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch("{% url 'dashboard:orders_return' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'تایید',
+                            confirmButtonColor: '#46A9AE'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'خطا',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonColor: '#e74c3c'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'خطا',
+                        text: 'خطایی در ارتباط با سرور رخ داده است.',
+                        icon: 'error',
+                        confirmButtonColor: '#e74c3c'
+                    });
+                });
+        });
+    </script>
+{% endblock %}
