@@ -6,6 +6,7 @@ from product.models import Product, ProductComment
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils import timezone
+from .models import Wishlist
 
 
 def get_pages_to_show(current_page, total_pages):
@@ -206,3 +207,24 @@ def orders_return(request):
         'profile': profile,
     }
     return render(request, 'dashboard/orders_return.html', context)
+
+
+@login_required
+def wishlist_products(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    wishlist_items = Wishlist.objects.filter(user=user).select_related('product').order_by('-created_at')
+
+    # Pagination
+    page_number = request.GET.get('page')
+    paginator = Paginator(wishlist_items, 6)
+    object_list = paginator.get_page(page_number)
+    pages_to_show = get_pages_to_show(object_list.number, paginator.num_pages)
+
+    context = {
+        'profile': profile,
+
+        'wishlist_items': object_list,
+        'pages_to_show': pages_to_show,
+    }
+    return render(request, 'dashboard/wishlist_products.html', context)
