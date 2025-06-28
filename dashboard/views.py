@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from accounts.models import Profile
 from cart.models import Order, CartItem
@@ -66,3 +66,27 @@ def order_list(request):
         'pages_to_show': pages_to_show,
     }
     return render(request, 'dashboard/orders.html', context)
+
+
+@login_required
+def order_detail(request, order_number):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    order = get_object_or_404(Order, order_number=order_number, user=user)
+
+    items = []
+    for item_data in (order.items_data or []):
+        try:
+            product = Product.objects.get(pk=item_data['product_id'])
+            item_data['product_obj'] = product
+            items.append(item_data)
+        except Product.DoesNotExist:
+            continue
+
+    context = {
+        'profile': profile,
+
+        'order': order,
+        'items': items,
+    }
+    return render(request, 'dashboard/order_detail.html', context)
