@@ -57,9 +57,12 @@
                 </form>
 
                 <ul>
-                    <li><a href="#"><i class="fa fa-user-large colormain" aria-hidden="true"></i></a></li>
-                    <li><a href="{% url 'cart:cart' %}"><i class="fa fa-cart-arrow-down colormain"
-                                                           aria-hidden="true"></i></a></li>
+                    {% if request.user.is_authenticated %}
+                        <li><a href="{% url "dashboard:home" %}"><i class="fa fa-user-tie colormain" aria-hidden="true"></i></a></li>
+                    {% else %}
+                        <li><a href="{% url 'account:login' %}"><i class="fa fa-user-large colormain" aria-hidden="true"></i></a></li>
+                    {% endif %}
+                    <li><a href="{% url 'cart:cart' %}"><i class="fa fa-cart-arrow-down colormain" aria-hidden="true"></i></a></li>
                 </ul>
             </div>
         </div>
@@ -121,7 +124,7 @@
                 <div class="col-md-2 col-sm-12">
                     <div class="user_head">
                         {% if request.user.is_authenticated %}
-                            <a href="#dashboard" class="iconhead">
+                            <a href="{% url 'dashboard:home' %}" class="iconhead">
                                 <i class="fa fa-user-tie font-20" aria-hidden="true"></i>
                             </a>
                         {% else %}
