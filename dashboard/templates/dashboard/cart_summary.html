@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}سفارشات در سبد{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+{% load custom_filters %}
+
+{% block content %}
+    <style>
+        .status-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-badges .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease-out;
+        }
+
+        .status-badges .badge i {
+            margin-left: 8px;
+            font-size: 14px;
+        }
+
+        .status-badges .badge.bg-light {
+            background-color: #fff;
+            color: #515151;
+            border: 1px solid #e0e0e0;
+        }
+
+        .status-badges .badge.bg-light:hover {
+            background-color: #f1f9fa;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badges .badge.badge-paid {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: #fff;
+            border: none;
+        }
+
+        .status-badges .badge.badge-paid:hover {
+            background: linear-gradient(135deg, #2E7D32, #4CAF50);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-pending {
+            background: linear-gradient(135deg, #FF9800, #E65100);
+            color: white;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .status-badges .badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+
+    <main class="order-delivered default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <!-- Cart Items Start -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>سفارشات در سبد</span></h3>
+                                {% if cart_items %}
+                                    <div class="status-badges space-top-15">
+                                        <a href="{% url 'cart:cart' %}">
+                                            <span class="badge badge-paid font-14"><i class="fa fa-check-circle"></i> پرداخت سفارشات</span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </header>
+                            <div class="content-section default">
+                                <div class="row">
+                                    {% if cart_items %}
+                                        {% for item in cart_items %}
+                                            <div class="col-md-12 col-sm-12 order_delivered_sec">
+                                                <div class="profile-recent-fav-row">
+                                                    <div class="col-12">
+                                                        <h4 class="profile-recent-fav-name">
+                                                            <span class="badge badge-pending">
+                                                                <i class="fa fa-spinner" style='color: white;' aria-hidden="true"></i> در انتظار پرداخت
+                                                            </span>
+                                                        </h4>
+                                                        <ul>
+                                                            <li>
+                                                                <b>محصول: </b>{{ item.product.title|truncatewords:5 }}
+                                                            </li>
+                                                            <li>
+                                                                <b>قیمت واحد: </b>{{ item.product.price|format_price }}
+                                                            </li>
+                                                            {% if item.color %}
+                                                                <li>
+                                                                    <b>رنگ: </b>{{ item.color.title }}
+                                                                </li>
+                                                            {% endif %}
+                                                            <li>
+                                                                <b>تعداد: </b>{{ item.quantity }}
+                                                            </li>
+                                                            <li>
+                                                                <b>قیمت نهایی: </b>{{ item.total_price|format_price }}
+                                                                تومان
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="row">
+                                                            <div class="col-4 col-lg-2 col-md-2">
+                                                                <br>
+                                                                {% if item.product.image %}
+                                                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.title|truncatewords:5 }}">
+                                                                {% else %}
+                                                                    <img src="{% static 'img/product_image_not_found.jpg' %}" alt="{{ item.product.title|truncatewords:5 }}">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 text-left">
+                                                        <button class="btn btn-error-masai remove-cart-item" aria-hidden="true" data-item-id="{{ item.id }}">
+                                                            <i class="fa fa-trash" style='color: white;' aria-hidden="true"></i> حذف از سبد
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="">
+                                            <p>سبد خرید شما خالی است.</p>
+                                            <a href="{% url 'product:product_list' %}" class="btn btn-primary">مشاهده محصولات</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <!-- Pagination Start -->
+                                {% if cart_items.has_other_pages %}
+                                    <div class="pagination">
+                                        {% if cart_items.has_previous %}
+                                            <a href="?page={{ cart_items.previous_page_number }}" class="page-arrow prev"><i class="fa fa-angle-right"></i></a>
+                                        {% endif %}
+                                        {% for page in pages_to_show %}
+                                            {% if page == '...' %}
+                                                <span class="page-number">...</span>
+                                            {% elif cart_items.number == page %}
+                                                <a href="?page={{ page }}" class="page-number active">{{ page }}</a>
+                                            {% else %}
+                                                <a href="?page={{ page }}" class="page-number">{{ page }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if cart_items.has_next %}
+                                            <a href="?page={{ cart_items.next_page_number }}" class="page-arrow next"><i class="fa fa-angle-left"></i></a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <!-- Pagination End -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Cart Items End -->
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+    <script>
+        $(document).ready(function () {
+            $('.remove-cart-item').click(function (e) {
+                e.preventDefault();
+                var itemId = $(this).data('item-id');
+
+                $.ajax({
+                    url: '/cart/remove/' + itemId + '/',
+                    method: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
