@@ -45,7 +45,7 @@
                     سفارشات
                 </a>
 
-                <a href="#orders_delivered" class="dropdown-item">
+                <a href="{% url "dashboard:orders_delivered" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders_delivered' %}active-menu{% endif %}">
                     <i class="fa fa-check-circle colormain" aria-hidden="true"></i>
                     سفارشات تحویل داده شده
                 </a>
@@ -114,7 +114,7 @@
             </li>
 
             <li>
-                <a href="#orders_delivered" class="dropdown-item">
+                <a href="{% url "dashboard:orders_delivered" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders_delivered' %}active{% endif %}">
                     <i class="fa fa-check-circle colormain" aria-hidden="true"></i>
                     سفارشات تحویل داده شده
                 </a>
