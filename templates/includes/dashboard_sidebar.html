@@ -59,7 +59,7 @@
                     سفارشات لغو شده
                 </a>
 
-                <a href="#orders_return" class="dropdown-item">
+                <a href="{% url "dashboard:orders_return" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders_return' %}active-menu{% endif %}">
                     <i class="fa fa-undo colormain" aria-hidden="true"></i>
                     لغو سفارش
                 </a>
@@ -134,7 +134,7 @@
             </li>
 
             <li>
-                <a href="#orders_return" class="dropdown-item">
+                <a href="{% url "dashboard:orders_return" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders_return' %}active{% endif %}">
                     <i class="fa fa-undo colormain" aria-hidden="true"></i>
                     لغو سفارش
                 </a>
