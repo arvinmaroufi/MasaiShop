@@ -4,6 +4,8 @@ from accounts.models import Profile
 from cart.models import Order, CartItem, Cart
 from product.models import Product, ProductComment
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.utils import timezone
 
 
 def get_pages_to_show(current_page, total_pages):
@@ -154,3 +156,53 @@ def orders_cancelled(request):
         'pages_to_show': pages_to_show,
     }
     return render(request, 'dashboard/orders_cancelled.html', context)
+
+
+@login_required
+def orders_return(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+
+    if request.method == 'POST':
+        order_number = request.POST.get('order_number')
+
+        try:
+            order = Order.objects.get(order_number=order_number, user=user)
+
+            if not profile.card_number:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'برای لغو سفارش باید شماره کارت خود را در پروفایل ثبت کنید.'
+                })
+
+            time_since_order = timezone.now() - order.created_at
+            if time_since_order.total_seconds() > 48 * 3600:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'زمان لغو سفارش گذشته است. فقط تا 48 ساعت پس از ثبت سفارش امکان لغو وجود دارد.'
+                })
+
+            if order.status not in ['paid', 'shipped', 'pending']:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'این سفارش قابل لغو نیست. فقط سفارشات با وضعیت "پرداخت شده"، "ارسال شده" یا "در انتظار پرداخت" قابل لغو هستند.'
+                })
+
+            order.status = 'processing'
+            order.save()
+
+            return JsonResponse({
+                'success': True,
+                'message': 'سفارش شما در حال پردازش است. پس از تایید لغو سفارش، در بخش اعلان ها اطلاع خواهیم داد.'
+            })
+
+        except Order.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'سفارشی با این شماره یافت نشد.'
+            })
+
+    context = {
+        'profile': profile,
+    }
+    return render(request, 'dashboard/orders_return.html', context)
