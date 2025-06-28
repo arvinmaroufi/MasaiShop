@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from accounts.models import Profile
-from cart.models import Order, CartItem
+from cart.models import Order, CartItem, Cart
 from product.models import Product, ProductComment
 from django.core.paginator import Paginator
 
@@ -111,3 +111,25 @@ def orders_delivered(request):
         'pages_to_show': pages_to_show,
     }
     return render(request, 'dashboard/orders_delivered.html', context)
+
+
+@login_required
+def cart_summary(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    cart, created = Cart.objects.get_or_create(user=user)
+    cart_items = cart.items.all()
+
+    # Pagination
+    page_number = request.GET.get('page')
+    paginator = Paginator(cart_items, 6)
+    object_list = paginator.get_page(page_number)
+    pages_to_show = get_pages_to_show(object_list.number, paginator.num_pages)
+
+    context = {
+        'profile': profile,
+
+        'cart_items': object_list,
+        'pages_to_show': pages_to_show,
+    }
+    return render(request, 'dashboard/cart_summary.html', context)
