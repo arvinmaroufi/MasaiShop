@@ -246,3 +246,17 @@ def add_to_wishlist(request, product_id):
         return JsonResponse({'status': status, 'message': message})
     return redirect('product:product_detail', pk=product_id)
 
+
+@login_required
+def remove_from_wishlist(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    wishlist_item = get_object_or_404(Wishlist, user=request.user, product=product)
+    wishlist_item.delete()
+
+    message = "محصول از لیست علاقه‌ مندی‌ ها حذف شد."
+    status = 'success'
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'status': status, 'message': message})
+    return redirect('dashboard:wishlist_products')
+
