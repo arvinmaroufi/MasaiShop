@@ -29,8 +29,7 @@
     </div>
     <div class="responsive-profile-menu show-md location_me">
         <div class="btn-group">
-            <button type="button" class="btn btn-second-masai dropdown-toggle" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
+            <button type="button" class="btn btn-second-masai dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-navicon"></i>
                 حساب کاربری شما
             </button>
@@ -41,7 +40,7 @@
                     داشبورد
                 </a>
 
-                <a href="#orders" class="dropdown-item">
+                <a href="{% url "dashboard:orders" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders' %}active-menu{% endif %}">
                     <i class="fa fa-cart-arrow-down colormain" aria-hidden="true"></i>
                     سفارشات
                 </a>
@@ -109,7 +108,7 @@
             </li>
 
             <li>
-                <a href="#orders" class="dropdown-item">
+                <a href="{% url "dashboard:orders" %}" class="dropdown-item {% if request.resolver_match.url_name == 'orders' %}active{% endif %}">
                     <i class="fa fa-cart-arrow-down colormain" aria-hidden="true"></i> سفارشات
                 </a>
             </li>
