@@ -181,8 +181,7 @@
                                                                     class="fa fa-times-circle"></i> {{ order.get_status_display }}</span>
                                                         {% endif %}
                                                     </td>
-                                                    <td><a href="#order_detail"
-                                                           class="btn btn-sm btn-main-masai">مشاهده</a></td>
+                                                    <td><a href="{% url 'dashboard:order_detail' order.order_number %}" class="btn btn-sm btn-main-masai">مشاهده</a></td>
                                                 </tr>
                                             {% endfor %}
                                         {% else %}
