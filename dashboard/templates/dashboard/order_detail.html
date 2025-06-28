@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+{% block title %}فاکتور خرید {{ order.order_number }}{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+{% load custom_filters %}
+
+{% block content %}
+    <style>
+        .product-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            direction: rtl;
+            font-family: vazir-fd-wl;
+        }
+
+        .product-table thead {
+            background: linear-gradient(90deg, #61bec3, #46a9ae);
+            color: #fff;
+        }
+
+        .product-table th {
+            padding: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .product-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .product-table tbody tr:hover {
+            background-color: #f1f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-table td {
+            padding: 12px;
+            font-size: 13px;
+            text-align: center;
+            vertical-align: middle;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .product-table .product-image {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            mix-blend-mode: multiply;
+        }
+
+        .product-table .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .product-table .product-name {
+            font-weight: bold;
+            color: #515151;
+        }
+
+        .product-table .product-code {
+            font-size: 11px;
+            color: #979898;
+        }
+
+        .invoice-section {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 20px;
+            direction: rtl;
+            text-align: right;
+            font-family: vazir-fd-wl;
+            color: #515151;
+        }
+
+        .invoice-section h3 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #46a9ae;
+            border-bottom: 2px solid #61bec3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .invoice-section h3::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: -webkit-linear-gradient(#61bec3, #46a9ae);
+            position: absolute;
+            right: 0;
+            bottom: -2px;
+        }
+
+        .invoice-section .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .invoice-section .info-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f1f9fa;
+            border-radius: 8px;
+            transition: all 0.2s ease-out;
+        }
+
+        .invoice-section .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .invoice-section .info-item i {
+            font-size: 16px;
+            color: #61bec3;
+            margin-left: 10px;
+            background-color: #e2f3f4;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .invoice-section .info-item span.label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #474747;
+            margin-left: 5px;
+        }
+
+        .invoice-section .info-item span.value {
+            font-size: 13px;
+            color: #515151;
+        }
+
+        .invoice-section.summary .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .invoice-section.summary .summary-item:last-child {
+            border-bottom: none;
+            background-color: #f1f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .invoice-section.summary .summary-item span.label {
+            font-size: 14px;
+            color: #474747;
+        }
+
+        .invoice-section.summary .summary-item span.value {
+            font-size: 14px;
+            color: #61bec3;
+        }
+
+        .invoice-section.summary .summary-item.total span.value {
+            font-size: 16px;
+            background: -webkit-linear-gradient(#61bec3, #46a9ae);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        .status-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-badges .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease-out;
+        }
+
+        .status-badges .badge i {
+            margin-left: 8px;
+            font-size: 14px;
+        }
+
+        .status-badges .badge.bg-light {
+            background-color: #fff;
+            color: #515151;
+            border: 1px solid #e0e0e0;
+        }
+
+        .status-badges .badge.bg-light:hover {
+            background-color: #f1f9fa;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .status-badges .badge.badge-paid {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: #fff;
+            border: none;
+        }
+
+        .status-badges .badge.badge-paid:hover {
+            background: linear-gradient(135deg, #2E7D32, #4CAF50);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badges .badge.badge-shipped {
+            background: linear-gradient(135deg, #2196F3, #0D47A1);
+            color: #fff;
+            border: none;
+        }
+
+        .status-badges .badge.badge-shipped:hover {
+            background: linear-gradient(135deg, #0D47A1, #2196F3);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badges .badge.badge-delivered {
+            background: linear-gradient(135deg, #9C27B0, #6A1B9A);
+            color: #fff;
+            border: none;
+        }
+
+        .status-badges .badge.badge-delivered:hover {
+            background: linear-gradient(135deg, #6A1B9A, #9C27B0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badges .badge.badge-pending {
+            background: linear-gradient(135deg, #FF9800, #E65100);
+            color: #fff;
+            border: none;
+        }
+
+        .status-badges .badge.badge-pending:hover {
+            background: linear-gradient(135deg, #E65100, #FF9800);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badges .badge.badge-processing {
+            background: linear-gradient(135deg, #00BCD4, #00838F);
+            color: #fff;
+            border: none;
+        }
+
+        .status-badges .badge.badge-processing:hover {
+            background: linear-gradient(135deg, #00838F, #00BCD4);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badges .badge.badge-cancelled {
+            background: linear-gradient(135deg, #F44336, #C62828);
+            color: #fff;
+            border: none;
+        }
+
+        .status-badges .badge.badge-cancelled:hover {
+            background: linear-gradient(135deg, #C62828, #F44336);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .product-table {
+                font-size: 12px;
+            }
+
+            .product-table th,
+            .product-table td {
+                padding: 10px;
+            }
+
+            .product-table .product-image {
+                width: 50px;
+                height: 50px;
+            }
+
+            .invoice-section .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .invoice-section {
+                padding: 15px;
+            }
+
+            .invoice-section h3 {
+                font-size: 16px;
+            }
+
+            .status-badges .badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .product-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .product-table th,
+            .product-table td {
+                font-size: 11px;
+                padding: 8px;
+            }
+
+            .product-table .product-image {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+    <main class="order-delivered default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <div class="widget widget-product">
+                        <header class="card-header">
+                            <h3 class="card-title"><span>فاکتور خرید {{ order.order_number }}</span></h3>
+                            <div class="status-badges space-top-15">
+                                <span class="badge bg-light text-dark font-14">
+                                    <i class="fa fa-calendar"></i> {{ order.created_at|to_jalali:'%Y/%m/%d' }}
+                                </span>
+                                {% if order.status == 'paid' %}
+                                    <span class="badge badge-paid font-14">
+                                        <i class="fa fa-check-circle"></i> {{ order.get_status_display }}
+                                    </span>
+                                {% elif order.status == 'shipped' %}
+                                    <span class="badge badge-shipped font-14">
+                                        <i class="fa fa-truck"></i> {{ order.get_status_display }}
+                                    </span>
+                                {% elif order.status == 'delivered' %}
+                                    <span class="badge badge-delivered font-14">
+                                        <i class="fa fa-check-square"></i> {{ order.get_status_display }}
+                                    </span>
+                                {% elif order.status == 'pending' %}
+                                    <span class="badge badge-pending font-14">
+                                        <i class="fa fa-clock"></i> {{ order.get_status_display }}
+                                    </span>
+                                {% elif order.status == 'processing' %}
+                                    <span class="badge badge-processing font-14">
+                                        <i class="fa fa-cog fa-spin"></i> {{ order.get_status_display }}
+                                    </span>
+                                {% elif order.status == 'cancelled' %}
+                                    <span class="badge badge-cancelled font-14">
+                                        <i class="fa fa-times-circle"></i> {{ order.get_status_display }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </header>
+
+                        <div class="card-body">
+                            <!-- Buyer Information Start -->
+                            <div class="invoice-section">
+                                <h3>اطلاعات خریدار</h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <i class="fas fa-user"></i>
+                                        <span class="label">نام:</span>
+                                        {% if order.user.profile.first_name and order.user.profile.last_name %}
+                                            <span class="value">{{ order.user.profile.first_name }} {{ order.user.profile.last_name }}</span>
+                                        {% else %}
+                                            <span class="value">{{ order.user.username }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span class="label">شماره تلفن:</span>
+                                        {% if order.user.profile.phone %}
+                                            <span class="value">{{ order.user.profile.phone }}</span>
+                                        {% else %}
+                                            <span class="value">شماره تلفن ثبت نشده</span> /
+                                            <a href='#edit_profile'>
+                                                <span class="value" style='color: #C62828; font-weight: bold;'>ثبت شماره تلفن</span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-envelope"></i>
+                                        <span class="label">ایمیل:</span>
+                                        {% if order.user.profile.email %}
+                                            <span class="value">{{ order.user.profile.email }}</span>
+                                        {% else %}
+                                            <span class="value">ایمیل ثبت نشده</span> /
+                                            <a href='#edit_profile'>
+                                                <span class="value" style='color: #C62828; font-weight: bold;'>ثبت ایمیل</span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-location-dot"></i>
+                                        <span class="label">آدرس:</span>
+                                        <span class="value">{{ order.address.city }}، {{ order.address.province }}، {{ order.address.full_address }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-mail-bulk"></i>
+                                        <span class="label">کد پستی:</span>
+                                        <span class="value">{{ order.address.postal_code }}</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- Buyer Information End -->
+
+                            <!-- Products List Start -->
+                            <div class="table-responsive">
+                                <table class="table product-table">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>تصویر</th>
+                                        <th>محصول</th>
+                                        <th>تعداد</th>
+                                        <th>رنگ</th>
+                                        <th>قیمت واحد</th>
+                                        <th>قیمت نهایی</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in items %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {% if item.product_obj.image %}
+                                                    <img src="{{ item.product_obj.image.url }}"
+                                                         alt="{{ item.product_title |truncatewords:4 }}"
+                                                         class="product-image">
+                                                {% else %}
+                                                    <img src="{% static 'img/product_image_not_found.jpg' %}"
+                                                         alt="{{ item.product_title |truncatewords:4 }}"
+                                                         class="product-image">
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="product-info">
+                                                    <span class="product-name">{{ item.product_title|truncatewords:4 }}</span>
+                                                    {% comment %} <span class="product-code">کد: {{ item.color }}</span> {% endcomment %}
+                                                </div>
+                                            </td>
+                                            <td>{{ item.quantity }}</td>
+                                            <td>{{ item.color }}</td>
+                                            <td>{{ item.unit_price|format_price }} تومان</td>
+                                            <td>{{ item.total_price|format_price }} تومان</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Products List End -->
+
+                            <!--Summary Invoice Start -->
+                            <div class="invoice-section summary">
+                                <h3>خلاصه فاکتور</h3>
+                                <div class="summary-item">
+                                    <span class="label">جمع کل:</span>
+                                    <span class="value">{{ order.total_price|format_price }} تومان</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">تخفیف:</span>
+                                    <span class="value">{{ order.coupon_discount|format_price }} تومان</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">هزینه ارسال:</span>
+                                    {% if order.total_price > 10500000 %}
+                                        <span class="value">رایگان</span>
+                                    {% else %}
+                                        <span class="value">{{ order.shipping_cost|format_price }} تومان</span>
+                                    {% endif %}
+                                </div>
+                                <div class="summary-item total">
+                                    <span class="label">مبلغ قابل پرداخت:</span>
+                                    <span class="value">{{ order.final_price|format_price }} تومان</span>
+                                </div>
+                            </div>
+                            <!--Summary Invoice End -->
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+{% endblock content %}
