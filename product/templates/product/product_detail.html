@@ -402,7 +402,7 @@
                                                                             <img alt="{{ comment.author.username }}"
                                                                                  src="
 
-                                                                                         {% if comment.author.profile.image %}{{ comment.author.profile.image.url }}{% else %}{% static 'img/profile/1.png' %}{% endif %}"
+                                                                                         {% if comment.author.profile.image %}{{ comment.author.profile.image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}"
                                                                                  class="avatar">
                                                                             <div class="text-h5">
                                                                                 {% if comment.author.profile.first_name and comment.author.profile.last_name %}
@@ -511,7 +511,7 @@
                 newComment.innerHTML = `
                     <div class="comment-body">
                         <div class="comment-author">
-                            <img alt="" src="{% if request.user.profile.image %}{{ request.user.profile.image.url }}{% else %}{% static 'img/profile/1.png' %}{% endif %}" class="avatar">
+                            <img alt="" src="{% if request.user.profile.image %}{{ request.user.profile.image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" class="avatar">
                             <div class="text-h5">
                                 {% if request.user.profile.first_name and request.user.profile.last_name %}
                                     {{ request.user.profile.first_name }} {{ request.user.profile.last_name }}
