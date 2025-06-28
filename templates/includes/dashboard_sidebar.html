@@ -1,0 +1,180 @@
+{% load static %}
+{% load jalali_tags %}
+<div class="profile-page-aside col-xl-3 col-lg-4 col-md-6 center-section order-1">
+    <div class="profile-card-1">
+        <!--image-->
+        <div class="img">
+            <img src="{% static "img/default_profile_image.png" %}" alt='username'/>
+        </div>
+
+        <!--text-->
+        <div class="mid-section">
+            <div class="name">نام کاربری</div>
+            <div class="line"></div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="subtext">عضو از 1404/04/04</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="responsive-profile-menu show-md location_me">
+        <div class="btn-group">
+            <button type="button" class="btn btn-second-masai dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-navicon"></i>
+                حساب کاربری شما
+            </button>
+            <div class="dropdown-menu dropdown-menu-right text-right">
+
+                <a href="#home" class="dropdown-item active-menu">
+                    <i class="fa fa-home colormain" aria-hidden="true"></i>
+                    داشبورد
+                </a>
+
+                <a href="#orders" class="dropdown-item">
+                    <i class="fa fa-cart-arrow-down colormain" aria-hidden="true"></i>
+                    سفارشات
+                </a>
+
+                <a href="#orders_delivered" class="dropdown-item">
+                    <i class="fa fa-check-circle colormain" aria-hidden="true"></i>
+                    سفارشات تحویل داده شده
+                </a>
+
+                <a href="#cart_summary" class="dropdown-item">
+                    <i class="fa fa-shopping-cart colormain" aria-hidden="true"></i> سفارشات در سبد
+                </a>
+
+                <a href="#orders_cancelled" class="dropdown-item">
+                    <i class="fa fa-times colormain" aria-hidden="true"></i>
+                    سفارشات لغو شده
+                </a>
+
+                <a href="#orders_return" class="dropdown-item">
+                    <i class="fa fa-undo colormain" aria-hidden="true"></i>
+                    لغو سفارش
+                </a>
+
+                <a href="#wishlist_products" class="dropdown-item">
+                    <i class="fa fa-heart colormain" aria-hidden="true"></i>
+                    محصولات مورد علاقه
+                </a>
+
+                <a href="#user_addresses" class="dropdown-item">
+                    <i class="fa fa-map icon-icon colormain" aria-hidden="true"></i>
+                    آدرس های من
+                </a>
+
+                <a href="#notifications" class="dropdown-item">
+                    <i class="fa fa-bell colormain" aria-hidden="true"></i>
+                    اعلان ها
+                </a>
+
+                <a href="#user_profile" class="dropdown-item">
+                    <i class="fa fa-user-large colormain"></i>
+                    پروفایل
+                </a>
+
+                <a href="#change_password" class="dropdown-item">
+                    <i class="fa fa-shield colormain" aria-hidden="true"></i>
+                    تغییر رمز عبور
+                </a>
+
+                <a href="#logout" class="dropdown-item">
+                    <i class="fa fa-sign-out-alt colormain" aria-hidden="true"></i>
+                    خروج از حساب
+                </a>
+
+            </div>
+        </div>
+    </div>
+    <div class="profile-menu ">
+        <ul class="profile-menu-items">
+
+            <li>
+                <a href="#home" class="dropdown-item active">
+                    <i class="fa fa-home colormain" aria-hidden="true"></i>
+                    داشبورد
+                </a>
+            </li>
+
+            <li>
+                <a href="#orders" class="dropdown-item">
+                    <i class="fa fa-cart-arrow-down colormain" aria-hidden="true"></i> سفارشات
+                </a>
+            </li>
+
+            <li>
+                <a href="#orders_delivered" class="dropdown-item">
+                    <i class="fa fa-check-circle colormain" aria-hidden="true"></i>
+                    سفارشات تحویل داده شده
+                </a>
+            </li>
+
+            <li>
+                <a href="#cart_summary" class="dropdown-item">
+                    <i class="fa fa-shopping-cart colormain" aria-hidden="true"></i> سفارشات در سبد
+                </a>
+            </li>
+
+            <li>
+                <a href="#orders_cancelled" class="dropdown-item">
+                    <i class="fa fa-times colormain" aria-hidden="true"></i>
+                    سفارشات لغو شده
+                </a>
+            </li>
+
+            <li>
+                <a href="#orders_return" class="dropdown-item">
+                    <i class="fa fa-undo colormain" aria-hidden="true"></i>
+                    لغو سفارش
+                </a>
+            </li>
+
+            <li>
+                <a href="#wishlist_products" class="dropdown-item">
+                    <i class="fa fa-heart colormain" aria-hidden="true"></i>
+                    محصولات مورد علاقه
+                </a>
+            </li>
+
+            <li>
+                <a href="#user_addresses" class="dropdown-item">
+                    <i class="fa fa-map icon-icon colormain" aria-hidden="true"></i>
+                    آدرس های من
+                </a>
+            </li>
+
+            <li>
+                <a href="#notifications" class="dropdown-item">
+                    <i class="fa fa-bell colormain" aria-hidden="true"></i>
+                    اعلان ها
+                </a>
+            </li>
+
+            <li>
+                <a href="#user_profile" class="dropdown-item">
+                    <i class="fa fa-user-large colormain"></i>
+                    پروفایل
+                </a>
+            </li>
+
+            <li>
+                <a href="#change_password" class="dropdown-item">
+                    <i class="fa fa-shield colormain" aria-hidden="true"></i>
+                    تغییر رمز عبور
+                </a>
+            </li>
+
+            <li>
+                <a href="#logout" class="dropdown-item">
+                    <i class="fa fa-sign-out-alt colormain" aria-hidden="true"></i>
+                    خروج از حساب
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</div>
