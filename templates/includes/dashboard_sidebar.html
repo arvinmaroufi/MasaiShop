@@ -64,7 +64,7 @@
                     لغو سفارش
                 </a>
 
-                <a href="#wishlist_products" class="dropdown-item">
+                <a href="{% url "dashboard:wishlist_products" %}" class="dropdown-item {% if request.resolver_match.url_name == 'wishlist_products' %}active-menu{% endif %}">
                     <i class="fa fa-heart colormain" aria-hidden="true"></i>
                     محصولات مورد علاقه
                 </a>
@@ -141,7 +141,7 @@
             </li>
 
             <li>
-                <a href="#wishlist_products" class="dropdown-item">
+                <a href="{% url "dashboard:wishlist_products" %}" class="dropdown-item {% if request.resolver_match.url_name == 'wishlist_products' %}active{% endif %}">
                     <i class="fa fa-heart colormain" aria-hidden="true"></i>
                     محصولات مورد علاقه
                 </a>
