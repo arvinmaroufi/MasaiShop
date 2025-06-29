@@ -6,7 +6,8 @@ from product.models import Product, ProductComment
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils import timezone
-from .models import Wishlist
+from .models import Wishlist, Address
+from .forms import AddressForm
 
 
 def get_pages_to_show(current_page, total_pages):
@@ -262,3 +263,47 @@ def remove_from_wishlist(request, product_id):
         return JsonResponse({'status': status, 'message': message})
     return redirect('dashboard:wishlist_products')
 
+
+@login_required
+def user_addresses(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    addresses = Address.objects.filter(user=user).order_by('-created_at')
+
+    if request.method == 'POST':
+        if 'delete_address' in request.POST:
+            address_id = request.POST.get('delete_address')
+            address = get_object_or_404(Address, pk=address_id, user=user)
+            address.delete()
+            return redirect('dashboard:user_addresses')
+
+        if 'set_default' in request.POST:
+            address_id = request.POST.get('set_default')
+            address = get_object_or_404(Address, pk=address_id, user=user)
+            address.is_default = True
+            address.save()
+            return redirect('dashboard:user_addresses')
+
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = user
+            address.save()
+            return redirect('dashboard:user_addresses')
+    else:
+        form = AddressForm()
+
+    # Pagination
+    page_number = request.GET.get('page')
+    paginator = Paginator(addresses, 6)
+    object_list = paginator.get_page(page_number)
+    pages_to_show = get_pages_to_show(object_list.number, paginator.num_pages)
+
+    context = {
+        'profile': profile,
+
+        'addresses': object_list,
+        'form': form,
+        'pages_to_show': pages_to_show,
+    }
+    return render(request, 'dashboard/user_addresses.html', context)
