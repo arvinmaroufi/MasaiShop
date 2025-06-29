@@ -5,6 +5,12 @@
 {% load custom_filters %}
 
 {% block content %}
+    <style>
+        .favorites_heart.active i {
+            color: #e74c3c !important;
+        }
+    </style>
+
     <main class="single-product default">
         <div class="container">
             <div class="row">
@@ -64,8 +70,9 @@
                                 </div>
                                 <ul class="gallery-options">
                                     <li>
-                                        <button class="add-favorites favorites2 favorites_heart"><i
-                                                class="fa fa-heart"></i></button>
+                                        <button class="add-favorites favorites2 favorites_heart {% if is_in_wishlist %}active{% endif %}" data-product-id="{{ products.id }}">
+                                            <i class="fa fa-heart"></i>
+                                        </button>
                                     </li>
                                     <li>
                                         <button class="favorites2" data-toggle="modal" data-target="#myModal"><i
@@ -592,6 +599,87 @@
                         });
                     }
                 });
+        });
+
+
+        document.querySelectorAll('.favorites_heart').forEach(button => {
+            button.addEventListener('click', function() {
+                {% if not request.user.is_authenticated %}
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'ورود به سیستم',
+                        text: 'برای افزودن محصول به لیست علاقه ‌مندی ‌ها، ابتدا باید وارد حساب کاربری خود شوید.',
+                        icon: 'warning',
+                        confirmButtonText: 'ورود',
+                        confirmButtonColor: '#46A9AE',
+                        showCancelButton: true,
+                        cancelButtonText: 'انصراف',
+                        cancelButtonColor: '#e74c3c'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{% url 'account:login' %}?next={{ request.path }}";
+                        }
+                    });
+                    return false;
+                {% endif %}
+                const productId = this.getAttribute('data-product-id');
+                const isActive = this.classList.contains('active');
+                const url = isActive
+                    ? `/dashboard/wishlist/remove/${productId}/`
+                    : `/dashboard/wishlist/add/${productId}/`;
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' || data.status === 'info') {
+                        this.classList.toggle('active');
+
+                        Swal.fire({
+                            text: data.message,
+                            icon: data.status,
+                            confirmButtonText: 'تایید',
+                            confirmButtonColor: '#46A9AE'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'خطا',
+                        text: 'مشکلی در ارتباط با سرور پیش آمد',
+                        icon: 'error',
+                        confirmButtonColor: '#e74c3c'
+                    });
+                });
+            });
+        });
+
+        document.querySelectorAll('.favorites_heart').forEach(button => {
+            button.addEventListener('click', function(e) {
+                {% if not request.user.is_authenticated %}
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'ورود به سیستم',
+                        text: 'برای افزودن محصول به لیست علاقه ‌مندی‌ ها، ابتدا باید وارد حساب کاربری خود شوید.',
+                        icon: 'warning',
+                        confirmButtonText: 'ورود',
+                        confirmButtonColor: '#46A9AE',
+                        showCancelButton: true,
+                        cancelButtonText: 'انصراف',
+                        cancelButtonColor: '#e74c3c'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{% url 'account:login' %}?next={{ request.path }}";
+                        }
+                    });
+                    return false;
+                {% endif %}
+            });
         });
     </script>
 {% endblock %}

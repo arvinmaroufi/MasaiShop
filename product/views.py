@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.db.models import Min, Max, Q
 from urllib.parse import urlencode
 from django.http import JsonResponse
+from dashboard.models import Wishlist
 
 
 def redirect_to_home(request):
@@ -228,10 +229,14 @@ def product_detail(request, pid, slug):
         viewed_products.append(products.id)
         request.session['viewed_products'] = viewed_products
 
+    if request.user.is_authenticated:
+        is_in_wishlist = Wishlist.objects.filter(user=request.user, product=products).exists()
+
     context = {
         'products': products,
         'product_image': product_image,
         'comments': comments,
+        'is_in_wishlist': is_in_wishlist,
     }
     return render(request, 'product/product_detail.html', context)
 
