@@ -7,7 +7,7 @@ from product.models import Product
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses', verbose_name='کاربر')
     title = models.CharField(max_length=100, verbose_name='عنوان آدرس')
-    full_address = models.TextField(verbose_name='آدرس کامل')
+    full_address = models.TextField(max_length=300, verbose_name='آدرس کامل')
     city = models.CharField(max_length=50, verbose_name='شهر')
     province = models.CharField(max_length=50, verbose_name='استان')
     postal_code = models.CharField(max_length=10, validators=[RegexValidator(regex='^\d{10}$', message='کد پستی باید 10 رقم باشد')], verbose_name='کد پستی')
