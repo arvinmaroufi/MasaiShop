@@ -79,7 +79,7 @@
                     اعلان ها
                 </a>
 
-                <a href="#user_profile" class="dropdown-item">
+                <a href="{% url "dashboard:user_profile" %}" class="dropdown-item {% if request.resolver_match.url_name == 'user_profile' %}active-menu{% endif %}">
                     <i class="fa fa-user-large colormain"></i>
                     پروفایل
                 </a>
@@ -162,7 +162,7 @@
             </li>
 
             <li>
-                <a href="#user_profile" class="dropdown-item">
+                <a href="{% url "dashboard:user_profile" %}" class="dropdown-item {% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
                     <i class="fa fa-user-large colormain"></i>
                     پروفایل
                 </a>
