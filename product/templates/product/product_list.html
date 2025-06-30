@@ -79,10 +79,6 @@
                                             <div class="col-xl-4 col-lg-4 col-md-6 col-12 list_search_p ">
                                                 <div class="product-box">
                                                     <div class="product-seller-details product-seller-details-item-grid">
-                                                        <span class="search_prod_icon">
-                                                            <i class="fa fa-search search_icon_search" aria-hidden="true"></i>
-                                                            <i class="fa fa-heart search_icon_like" aria-hidden="true"></i>
-                                                        </span>
                                                         <span class="search_prod_btn">
                                                             <i class="fa fa fa-cart-arrow-down search_icon_cart" aria-hidden="true" data-product-id="{{ product.id }}" data-color-id="{% if product.color.all %}{{ product.color.first.id }}{% else %}null{% endif %}" onclick="addToCart(this)"></i>
                                                         </span>
