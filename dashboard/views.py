@@ -6,8 +6,9 @@ from product.models import Product, ProductComment
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils import timezone
-from .models import Wishlist, Address
+from .models import Wishlist, Address, Notification
 from .forms import AddressForm
+from django.db.models import Q
 
 
 def get_pages_to_show(current_page, total_pages):
@@ -307,3 +308,27 @@ def user_addresses(request):
         'pages_to_show': pages_to_show,
     }
     return render(request, 'dashboard/user_addresses.html', context)
+
+
+@login_required
+def notifications_list(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+
+    Notification.delete_expired_notifications()
+
+    now = timezone.now()
+    notifications = Notification.objects.filter(
+        is_active=True
+    ).filter(
+        Q(is_for_all_users=True) | Q(users=user)
+    ).filter(
+        Q(expiration_date__isnull=True) | Q(expiration_date__gte=now)
+    ).distinct().order_by('-created_at')
+
+    context = {
+        'profile': profile,
+
+        'notifications': notifications,
+    }
+    return render(request, 'dashboard/notifications_list.html', context)
