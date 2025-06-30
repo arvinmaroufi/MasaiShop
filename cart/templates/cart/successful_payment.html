@@ -40,7 +40,7 @@
                         <p>
                             کد سفارش: <b>{{ order.order_number }}</b>
                         </p>
-                        <a href="#order_detail" class="btn btn-main-masai">مشاهده وضعیت سفارش</a>
+                        <a href="{% url 'dashboard:order_detail' order.order_number %}" class="btn btn-main-masai">مشاهده وضعیت سفارش</a>
                     </div>
                 </main>
             </div>
