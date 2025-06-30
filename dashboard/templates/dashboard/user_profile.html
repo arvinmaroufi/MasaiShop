@@ -76,7 +76,7 @@
                                         </p>
                                     </div>
                                     <div class="col-12 text-center">
-                                        <a href="#edit_profile" class="btn btn-main-masai big_btn">
+                                        <a href="{% url 'dashboard:edit_profile' request.user.profile.user.username %}" class="btn btn-main-masai big_btn">
                                             ویرایش پروفایل
                                         </a>
                                     </div>
