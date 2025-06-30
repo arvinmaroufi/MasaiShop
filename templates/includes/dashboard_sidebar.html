@@ -74,7 +74,7 @@
                     آدرس های من
                 </a>
 
-                <a href="#notifications" class="dropdown-item">
+                <a href="{% url "dashboard:notifications" %}" class="dropdown-item {% if request.resolver_match.url_name == 'notifications' %}active-menu{% endif %}">
                     <i class="fa fa-bell colormain" aria-hidden="true"></i>
                     اعلان ها
                 </a>
@@ -155,7 +155,7 @@
             </li>
 
             <li>
-                <a href="#notifications" class="dropdown-item">
+                <a href="{% url "dashboard:notifications" %}" class="dropdown-item {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
                     <i class="fa fa-bell colormain" aria-hidden="true"></i>
                     اعلان ها
                 </a>
