@@ -332,3 +332,14 @@ def notifications_list(request):
         'notifications': notifications,
     }
     return render(request, 'dashboard/notifications_list.html', context)
+
+
+@login_required
+def user_profile(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+
+    context = {
+        'profile': profile,
+    }
+    return render(request, 'dashboard/user_profile.html', context)
