@@ -18,4 +18,5 @@ urlpatterns = [
     path('notifications/', views.notifications_list, name='notifications'),
     path('profile/', views.user_profile, name='user_profile'),
     path('profile/<str:username>/', views.edit_profile, name='edit_profile'),
+    path('change_password/', views.change_password, name='change_password'),
 ]
