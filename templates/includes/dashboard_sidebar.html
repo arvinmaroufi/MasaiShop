@@ -69,7 +69,7 @@
                     محصولات مورد علاقه
                 </a>
 
-                <a href="#user_addresses" class="dropdown-item">
+                <a href="{% url "dashboard:user_addresses" %}" class="dropdown-item {% if request.resolver_match.url_name == 'user_addresses' %}active-menu{% endif %}">
                     <i class="fa fa-map icon-icon colormain" aria-hidden="true"></i>
                     آدرس های من
                 </a>
@@ -148,7 +148,7 @@
             </li>
 
             <li>
-                <a href="#user_addresses" class="dropdown-item">
+                <a href="{% url "dashboard:user_addresses" %}" class="dropdown-item {% if request.resolver_match.url_name == 'user_addresses' %}active{% endif %}">
                     <i class="fa fa-map icon-icon colormain" aria-hidden="true"></i>
                     آدرس های من
                 </a>
