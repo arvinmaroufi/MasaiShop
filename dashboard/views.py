@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils import timezone
 from .models import Wishlist, Address, Notification
-from .forms import AddressForm
+from .forms import AddressForm, ProfileEditForm
 from django.db.models import Q
 
 
@@ -343,3 +343,25 @@ def user_profile(request):
         'profile': profile,
     }
     return render(request, 'dashboard/user_profile.html', context)
+
+
+@login_required
+def edit_profile(request, username):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+
+    user_profile = get_object_or_404(Profile, user__username=username)
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST or None, request.FILES or None, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard:home')
+    else:
+        form = ProfileEditForm(instance=user_profile)
+
+    context = {
+        'profile': profile,
+
+        'form': form,
+    }
+    return render(request, 'dashboard/edit_profile.html', context)
