@@ -89,7 +89,7 @@
                     تغییر رمز عبور
                 </a>
 
-                <a href="#logout" class="dropdown-item">
+                <a href="{% url "account:logout" %}" class="dropdown-item {% if request.resolver_match.url_name == 'logout' %}active-menu{% endif %}">
                     <i class="fa fa-sign-out-alt colormain" aria-hidden="true"></i>
                     خروج از حساب
                 </a>
@@ -176,7 +176,7 @@
             </li>
 
             <li>
-                <a href="#logout" class="dropdown-item">
+                <a href="{% url "account:logout" %}" class="dropdown-item {% if request.resolver_match.url_name == 'logout' %}active{% endif %}">
                     <i class="fa fa-sign-out-alt colormain" aria-hidden="true"></i>
                     خروج از حساب
                 </a>
