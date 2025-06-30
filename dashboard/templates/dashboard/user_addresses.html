@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+{% block title %}آدرس های من{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block content %}
+    <style>
+        .modal-body .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal-body label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .modal-body input[type="text"],
+        .modal-body input[type="tel"],
+        .modal-body textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-body textarea {
+            min-height: 100px;
+        }
+
+        .form-check {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-check-input {
+            margin-left: 5px;
+        }
+
+        .address-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .default-address-badge {
+            background-color: #2E7D32;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .address-card {
+            position: relative;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .address-card.default {
+            border: 2px solid #28a745;
+        }
+
+        .address-actions .btn {
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .badge-delete {
+            background: linear-gradient(135deg, #F44336, #C62828);
+            color: white;
+        }
+
+        .badge-default {
+            background: linear-gradient(135deg, #2196F3, #0D47A1);
+            color: white;
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        input.error, textarea.error {
+            border-color: #dc3545 !important;
+        }
+
+        input.error:focus, textarea.error:focus {
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+    </style>
+
+    <main class="order-delivered  default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>آدرس های من</span></h3>
+                                <div class="text-left">
+                                    <a class="btn btn-main-masai" data-toggle="modal" data-target="#addressModal">آدرس جدید</a>
+                                </div>
+                            </header>
+                            <!-- Addresses Start -->
+                            <div class="content-section default">
+                                <div class="row">
+                                    {% if addresses %}
+                                        {% for address in addresses %}
+                                            <div class="col-md-12 col-sm-12 order_delivered_sec address-card {% if address.is_default %}default{% endif %}">
+                                                <div class="row">
+                                                    <div class="col-10 col-lg-10 col-md-10">
+                                                        <h4 class="profile-recent-fav-name">
+                                                            <i class="fa fa-map-pin" aria-hidden="true"></i> {{ address.title }}
+                                                        </h4>
+                                                        <ul class="order-addres">
+                                                            <i class="fa fa-map  colormain"
+                                                               aria-hidden="true"></i> {{ address.city }}، {{ address.province }}، {{ address.full_address }}
+                                                            <li>
+                                                                <i class="fa fa-mail-bulk colormain"
+                                                                   aria-hidden="true"></i> {{ address.postal_code }}
+                                                            </li>
+                                                            <li>
+                                                                <i class="fa fa-phone colormain"
+                                                                   aria-hidden="true"></i> {{ address.phone_number }}
+                                                            </li>
+                                                            <li>
+                                                                <i class="fa fa-user-large colormain" aria-hidden="true"></i> {{ address.receiver_name }}
+                                                            </li>
+                                                        </ul>
+                                                        <div class="address-actions">
+                                                            {% if not address.is_default %}
+                                                                <form method="post" action="{% url 'dashboard:user_addresses' %}">
+                                                                    {% csrf_token %}
+                                                                    <input type="hidden" name="set_default" value="{{ address.id }}">
+                                                                    <button type="submit" class="btn btn-sm badge-default">تنظیم به عنوان پیش‌فرض
+                                                                    </button>
+                                                                </form>
+                                                            {% endif %}
+                                                            <form method="post" action="{% url 'dashboard:user_addresses' %}">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="delete_address" value="{{ address.id }}">
+                                                                <button type="submit" class="btn btn-sm badge-delete" onclick="return confirm('آیا از حذف این آدرس مطمئن هستید؟')">
+                                                                    حذف آدرس
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 col-lg-2 col-md-2">
+                                                        {% if address.is_default %}
+                                                            <span class="default-address-badge">پیش‌فرض</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="">
+                                            <p>آدرسی یافت نشد</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <!-- Pagination Start -->
+                                {% if addresses.has_other_pages %}
+                                    <div class="pagination">
+                                        {% if addresses.has_previous %}
+                                            <a href="?page={{ addresses.previous_page_number }}" class="page-arrow prev"><i class="fa fa-angle-right"></i></a>
+                                        {% endif %}
+                                        {% for page in pages_to_show %}
+                                            {% if page == '...' %}
+                                                <span class="page-number">...</span>
+                                            {% elif addresses.number == page %}
+                                                <a href="?page={{ page }}" class="page-number active">{{ page }}</a>
+                                            {% else %}
+                                                <a href="?page={{ page }}" class="page-number">{{ page }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if addresses.has_next %}
+                                            <a href="?page={{ addresses.next_page_number }}" class="page-arrow next"><i class="fa fa-angle-left"></i></a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <!-- Pagination End -->
+                            </div>
+                            <!-- Addresses End -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-share modal-width-custom2 modal fade " id="addressModal" tabindex="-1" role="dialog"
+         aria-labelledby="addressModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="addressModalLabel">آدرس جدید</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'dashboard:user_addresses' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_title">* عنوان آدرس</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.title.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_full_address">* آدرس کامل</label>
+                            {{ form.full_address }}
+                            {% if form.full_address.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.full_address.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_city">* شهر</label>
+                                    {{ form.city }}
+                                    {% if form.city.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.city.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_province">* استان</label>
+                                    {{ form.province }}
+                                    {% if form.province.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.province.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_postal_code">* کد پستی</label>
+                                    {{ form.postal_code }}
+                                    {% if form.postal_code.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.postal_code.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_phone_number">* شماره موبایل</label>
+                                    {{ form.phone_number }}
+                                    {% if form.phone_number.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.phone_number.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_receiver_name">* نام تحویل گیرنده</label>
+                            {{ form.receiver_name }}
+                            {% if form.receiver_name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.receiver_name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-check">
+                            {{ form.is_default }}
+                            <label class="form-check-label" for="id_is_default" style='margin-right: 20px'>آدرس پیش‌فرض</label>
+                        </div>
+                        <div class="text-left mt-3">
+                            <button type="submit" class="btn btn-main-masai">ثبت آدرس</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.querySelectorAll('[onclick="return confirm(\'آیا از حذف این آدرس مطمئن هستید؟\')"]').forEach(button => {
+            button.onclick = function (e) {
+                e.preventDefault();
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: 'حذف آدرس',
+                    text: 'آیا از حذف این آدرس مطمئن هستید؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله، حذف شود',
+                    cancelButtonText: 'انصراف',
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#46A9AE',
+                    background: '#f8f9fa',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            };
+        });
+    </script>
+{% endblock %}
