@@ -84,7 +84,7 @@
                     پروفایل
                 </a>
 
-                <a href="#change_password" class="dropdown-item">
+                <a href="{% url "dashboard:change_password" %}" class="dropdown-item {% if request.resolver_match.url_name == 'change_password' %}active-menu{% endif %}">
                     <i class="fa fa-shield colormain" aria-hidden="true"></i>
                     تغییر رمز عبور
                 </a>
@@ -169,7 +169,7 @@
             </li>
 
             <li>
-                <a href="#change_password" class="dropdown-item">
+                <a href="{% url "dashboard:change_password" %}" class="dropdown-item {% if request.resolver_match.url_name == 'change_password' %}active{% endif %}">
                     <i class="fa fa-shield colormain" aria-hidden="true"></i>
                     تغییر رمز عبور
                 </a>
