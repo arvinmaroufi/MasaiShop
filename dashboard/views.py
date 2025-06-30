@@ -9,6 +9,9 @@ from django.utils import timezone
 from .models import Wishlist, Address, Notification
 from .forms import AddressForm, ProfileEditForm
 from django.db.models import Q
+from accounts.forms import ChangePasswordForm
+from django.contrib.auth import logout, update_session_auth_hash
+from django.contrib import messages
 
 
 def get_pages_to_show(current_page, total_pages):
@@ -365,3 +368,34 @@ def edit_profile(request, username):
         'form': form,
     }
     return render(request, 'dashboard/edit_profile.html', context)
+
+
+@login_required
+def change_password(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            old_password = form.cleaned_data['old_password']
+            new_password = form.cleaned_data['new_password']
+
+            if request.user.check_password(old_password):
+                request.user.set_password(new_password)
+                request.user.save()
+                update_session_auth_hash(request, request.user)
+                logout(request)
+                messages.success(request, 'رمز عبور شما با موفقیت تغییر یافت. لطفاً با رمز عبور جدید وارد شوید.')
+                return redirect('account:login')
+            else:
+                form.add_error('old_password', 'رمز عبور فعلی نادرست است.')
+    else:
+        form = ChangePasswordForm()
+
+    context = {
+        'profile': profile,
+
+        'form': form,
+    }
+    return render(request, 'dashboard/change_password.html', context)
