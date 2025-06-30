@@ -1,6 +1,7 @@
 from django import forms
 from .models import Address
 from django.core.exceptions import ValidationError
+from accounts.models import Profile
 
 
 class AddressForm(forms.ModelForm):
@@ -65,3 +66,53 @@ class AddressForm(forms.ModelForm):
         if len(receiver_name.split()) < 2:
             raise ValidationError("لطفا نام و نام خانوادگی تحویل گیرنده را وارد کنید.")
         return receiver_name
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'email', 'about_me', 'phone', 'card_number', 'image']
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if len(first_name) > 100:
+            raise ValidationError("نام باید حداکثر 100 کاراکتر باشد.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if len(last_name) > 100:
+            raise ValidationError("نام خانوادگی باید حداکثر 100 کاراکتر باشد.")
+        return last_name
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email.endswith('@gmail.com'):
+            raise ValidationError("لطفاً یک ایمیل معتبر با دامنه @gmail.com وارد کنید.")
+        if len(email) < 15:
+            raise ValidationError("ایمیل باید حداقل 15 کاراکتر باشد.")
+        if len(email) > 100:
+            raise ValidationError("ایمیل باید حداکثر 100 کاراکتر باشد.")
+        return email
+
+    def clean_about_me(self):
+        about_me = self.cleaned_data.get('about_me')
+        if len(about_me) > 250:
+            raise ValidationError("متن درباره من باید حداکثر 250 کاراکتر باشد.")
+        return about_me
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if not phone.startswith('09'):
+            raise ValidationError("شماره تلفن باید با 09 شروع شود.")
+        if len(phone) != 11:
+            raise ValidationError("شماره تلفن باید 11 رقم باشد.")
+        return phone
+
+    def clean_card_number(self):
+        card_number = self.cleaned_data.get('card_number')
+        if len(card_number) != 16:
+            raise ValidationError("شماره کارت باید 16 رقم باشد.")
+        if not card_number.isdigit():
+            raise ValidationError("شماره کارت باید فقط شامل اعداد باشد.")
+        return card_number
