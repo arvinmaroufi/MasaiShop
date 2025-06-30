@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}پروفایل{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block content %}
+    <main class="profile-user-page default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="profile-page col-xl-9 col-lg-8 col-md-12 order-2">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>پروفایل</span></h3>
+                            </header>
+                            <div class="content-section default">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                        <p>
+                                            <span class="title">نام  :</span>
+                                            {% if profile.first_name %}
+                                                <span>{{ profile.first_name }} </span>
+                                            {% else %}
+                                                <span>ثبت نشده </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <p>
+                                            <span class="title"> نام خانوادگی :</span>
+                                            {% if profile.last_name %}
+                                                <span>{{ profile.last_name }} </span>
+                                            {% else %}
+                                                <span>ثبت نشده </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <p>
+                                            <span class="title">ایمیل :</span>
+                                            {% if profile.email %}
+                                                <span>{{ profile.email }} </span>
+                                            {% else %}
+                                                <span>ثبت نشده </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <p>
+                                            <span class="title">شماره تلفن :</span>
+                                            {% if profile.phone %}
+                                                <span>{{ profile.phone }} </span>
+                                            {% else %}
+                                                <span>ثبت نشده </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <p>
+                                            <span class="title">شماره کارت :</span>
+                                            {% if profile.card_number %}
+                                                <span>{{ profile.card_number }} </span>
+                                            {% else %}
+                                                <span>ثبت نشده </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <p>
+                                            <span class="title">درباره من :</span>
+                                            {% if profile.about_me %}
+                                                <span>{{ profile.about_me }} </span>
+                                            {% else %}
+                                                <span>ثبت نشده </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <a href="#edit_profile" class="btn btn-main-masai big_btn">
+                                            ویرایش پروفایل
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+{% endblock content %}
