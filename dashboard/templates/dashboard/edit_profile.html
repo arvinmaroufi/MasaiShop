@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}ویرایش پروفایل{% endblock title %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block content %}
+    <main class="profile-user-page default space-top-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8 col-md-12 order-2">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <header class="card-header">
+                                <h3 class="card-title"><span>اطلاعات حساب شخصی</span></h3>
+                            </header>
+                            <div class="content-section default">
+                                <form class="" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-account-title">نام</div>
+                                            <div class="form-account-row">
+                                                <input class="input_second input_all" type="text" placeholder="مثال: رضا" maxlength="100"
+                                                       id="first_name" name="first_name" value="{{ form.first_name.value|default:profile.first_name }}">
+                                                {% if form.first_name.errors %}
+                                                    <div class="text-danger">{{ form.first_name.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-account-title">نام خانوادگی</div>
+                                            <div class="form-account-row">
+                                                <input class="input_second input_all" type="text" placeholder="مثال: رضایی" maxlength="100"
+                                                       id="last_name" name="last_name" value="{{ form.last_name.value|default:profile.last_name }}">
+                                                {% if form.last_name.errors %}
+                                                    <div class="text-danger">{{ form.last_name.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-account-title">شماره تلفن</div>
+                                            <div class="form-account-row">
+                                                <input class="input_second input_all" type="text" placeholder="مثال: 09181234567" maxlength="11"
+                                                       id="phone" name="phone" value="{{ form.phone.value|default:profile.phone }}">
+                                                {% if form.phone.errors %}
+                                                    <div class="text-danger">{{ form.phone.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-account-title">ایمیل</div>
+                                            <div class="form-account-row">
+                                                <input class="input_second input_all" type="text" placeholder="مثال: reza@gmail.com" maxlength="100"
+                                                       id="email" name="email" value="{{ form.email.value|default:profile.email }}">
+                                                {% if form.email.errors %}
+                                                    <div class="text-danger">{{ form.email.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-account-title">شماره کارت</div>
+                                            <div class="form-account-row">
+                                                <input class="input_second input_all" type="text" placeholder="مثال: 6037498514785236" maxlength="16"
+                                                       id="card_number" name="card_number" value="{{ form.card_number.value|default:profile.card_number }}">
+                                                {% if form.card_number.errors %}
+                                                    <div class="text-danger">{{ form.card_number.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-account-title">درباره من</div>
+                                            <div class="form-account-row">
+                                                <textarea class="input_second input_all" style="max-height: 84px; height: 50px;" placeholder="مثال: من رضا رضایی هستم" maxlength="250"
+                                                          id="about_me" name="about_me">{{ form.about_me.value|default:profile.about_me }}</textarea>
+                                                {% if form.about_me.errors %}
+                                                    <div class="text-danger">{{ form.about_me.errors }}</div>
+                                                {% endif %}
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-account-title">تصویر پروفایل</div>
+                                            <div class="form-account-row">
+                                                {{ form.image }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 text-center mt-4">
+                                            <button type="submit" class="btn big_btn btn-main-masai">ثبت اطلاعات
+                                                کاربری
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Sidebar Start -->
+                {% include "includes/dashboard_sidebar.html" %}
+                <!-- Dashboard Sidebar End -->
+
+            </div>
+        </div>
+    </main>
+{% endblock %}
