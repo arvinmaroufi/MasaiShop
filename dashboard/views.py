@@ -38,6 +38,7 @@ def home(request):
     cancelled_orders = Order.objects.filter(user=user, status='cancelled').count()
     comments_count = ProductComment.objects.filter(author=user).count()
     wishlist_products_count = Wishlist.objects.filter(user=user).count()
+    user_notifications_count = Notification.objects.filter(Q(is_for_all_users=True) | Q(users=user), is_active=True).count()
 
     recent_orders = Order.objects.filter(user=user).order_by('-created_at')[:5]
     popular_products = Product.objects.filter(status='published', stock_count__gt=0).order_by('-views')[:10]
@@ -50,6 +51,7 @@ def home(request):
         'cancelled_orders': cancelled_orders,
         'comments_count': comments_count,
         'wishlist_products_count': wishlist_products_count,
+        'user_notifications_count': user_notifications_count,
 
         'recent_orders': recent_orders,
         'popular_products': popular_products,
