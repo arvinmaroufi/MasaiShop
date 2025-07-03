@@ -451,7 +451,7 @@
                                                     <button class="btn btn-main-masai" type="submit">ثبت دیدگاه</button>
                                                 </form>
                                             {% else %}
-                                                <a href="#login" class="btn btn-main-masai">برای ثبت دیدگاه ابتدا باید
+                                                <a href="{% url 'account:login' %}" class="btn btn-main-masai">برای ثبت دیدگاه ابتدا باید
                                                     وارد شوید</a>
                                             {% endif %}
 
