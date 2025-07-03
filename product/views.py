@@ -229,6 +229,7 @@ def product_detail(request, pid, slug):
         viewed_products.append(products.id)
         request.session['viewed_products'] = viewed_products
 
+    is_in_wishlist = False
     if request.user.is_authenticated:
         is_in_wishlist = Wishlist.objects.filter(user=request.user, product=products).exists()
 
