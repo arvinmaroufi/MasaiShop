@@ -58,4 +58,6 @@ class NotificationAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
 
     @admin.display(description='تاریخ انقضا', ordering='expiration_date')
     def get_expiration_date_jalali(self, obj):
-        return datetime2jalali(obj.expiration_date).strftime('%a, %d %b %Y')
+        if obj.expiration_date:
+            return datetime2jalali(obj.expiration_date).strftime('%a, %d %b %Y')
+        return '-'
